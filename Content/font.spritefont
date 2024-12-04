@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
+	<Asset Type="Graphics:FontDescription">
+		<FontName>operius-regular.ttf</FontName>
+		<!-- Название шрифта или путь к TTF-файлу -->
+		<Size>24</Size>
+		<!-- Размер шрифта -->
+		<Spacing>2</Spacing>
+		<!-- Расстояние между буквами -->
+		<Style>Regular</Style>
+		<!-- Стиль шрифта: Regular, Bold, Italic -->
+		<DefaultCharacter>*</DefaultCharacter>
+		<!-- Заменяемый символ при отсутствии -->
+		<CharacterRegions>
+			<CharacterRegion>
+				<Start> </Start>
+				<End>~</End>
+			</CharacterRegion>
+		</CharacterRegions>
+	</Asset>
+</XnaContent>
