@@ -1,9 +1,8 @@
 ﻿using BolyukGame.Shared;
+using BolyukGame.UI;
 using BolyukGame.UI.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using System.Linq;
 
 
@@ -12,8 +11,9 @@ namespace BolyukGame.Menu
     public abstract class IMenu
     {
 
-        List<UIElement> elements = new List<UIElement>();
+        UIContainer grid = new UIContainer();
         KeyHandling keyHandling = new KeyHandling();
+        KeyEvent lastKeyUpdate = new KeyEvent();
 
         public void InternalUpdate(GameTime gameTime)
         {
@@ -27,37 +27,39 @@ namespace BolyukGame.Menu
 
             bool isKeyHandlingNeeded = keyEvent.UpKeys.Any() || keyEvent.DownKeys.Any();
 
-            elements.ForEach(e =>
+            if (isKeyHandlingNeeded && !lastKeyUpdate.Equals(keyEvent))
             {
-                if (isKeyHandlingNeeded  && e is UIKeyHandle keyHandle)
-                    keyHandle.onKeyEvent(keyEvent);
-                e.Update(gameTime);
-            });
+                grid.onKeyEvent(keyEvent);
+                lastKeyUpdate = keyEvent;
+            }
+                
+            grid.Update(gameTime);
+
             Update(gameTime);
         }
 
         public void InternalDraw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             BeforeDraw(gameTime, spriteBatch);
-            elements.ForEach(e => e.Draw(gameTime, spriteBatch));
+            grid.Draw(gameTime, spriteBatch);
             Draw(gameTime, spriteBatch);
         }
 
         public virtual void BeforeUpdate(GameTime gameTime) { }
 
-        public abstract void Update(GameTime gameTime);
+        public virtual void Update(GameTime gameTime) { }
 
         public virtual void BeforeDraw(GameTime gameTime, SpriteBatch spriteBatch) { }
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch) { }
 
-        public virtual void OnResize(float width, float height)
+        public virtual void OnResize(int width, int height)
         {
-            elements.ForEach(e => e.OnWindowResize(width, height));
+            grid.OnParentResized(width, height);
         }
 
         public void RegUI(UIElement element)
         {
-            elements.Add(element);
+            grid.AddElement(element);
         }
     }
 }

@@ -6,12 +6,12 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace BolyukGame.UI
 {
-    public class UIList : UIElement, UIKeyHandle
+    public class UIList : UIContainer
     {
-        private List<UIElement> elements = new List<UIElement>();
         private int current = 0;
 
         private Texture2D highlightTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
@@ -27,38 +27,28 @@ namespace BolyukGame.UI
             }
         }
 
-        public bool onKeyEvent(KeyEvent args)
+        public override bool onKeyEvent(KeyEvent args)
         {
             if (args.IsOnlyUp(Keys.Down))
             {
-                current = Math.Min(current + 1, elements.Count - 1);
+                if(current == elements.Count - 1)
+                    return false;
+                current++;
                 return true;
             }
             if (args.IsOnlyUp(Keys.Up))
             {
-                current = Math.Max(current - 1, 0);
+                if (current == 0)
+                    return false;
+                current--;
                 return true;
             }
 
-            bool r = false;
-
-            foreach (UIKeyHandle item in elements.Where(e => e is UIKeyHandle))
+            if (elements[current] is UIKeyHandle keyHandle)
             {
-                r = item.onKeyEvent(args);
-                if (r)
-                    return true;
+              return keyHandle.onKeyEvent(args);
             }
             return false;
-        }
-
-        public override void OnWindowResize(float width, float height)
-        {
-            elements.ForEach(e => e.OnWindowResize(width, height));
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            elements.ForEach(e => e.Update(gameTime));
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -67,7 +57,7 @@ namespace BolyukGame.UI
             {
                 if (i == current)
                 {
-                    var highlightRect = new Rectangle(elements[i].StartDrawX-1, elements[i].StartDrawY-1, elements[i].Width+1, elements[i].Height+1);
+                    var highlightRect = new Rectangle(elements[i].StartX-1, elements[i].StartY-1, elements[i].LogicalWidth+1, elements[i].LogicalHeight+1);
                     spriteBatch.Draw(highlightTexture, highlightRect, Color.White);
                 }
 
@@ -75,37 +65,42 @@ namespace BolyukGame.UI
             }
         }
 
-        public void AddElement(UIElement element)
+        public override void AddElement(UIElement element)
         {
-            element.StartX = this.StartX;
-            element.StartY = this.StartY + elements.Sum(e => e.Height);
-            elements.Add(element);
+            base.AddElement(element);
             ReCalculate();
         }
 
-        public void RemoveElement(UIElement element)
+        public void InsertElement(int pos, UIElement element)
         {
-            elements.Remove(element);
+            elements.Insert(pos, element);
+            element.Parent = this;
+            ReCalculate();
+        }
+
+        public override void RemoveElement(UIElement element)
+        {
+            base.RemoveElement(element);
             ReCalculate();
         }
 
         public override void ReCalculate()
         {
+            base.ReCalculate();
+
             this.Height = elements.Sum(e => e.Height);
             this.Width = elements.Max(e => e.Width);
+
+            for (int i = 0; i < elements.Count; i++)
+            {
+                var e = elements[i];
+                e.StartX = this.StartX;
+                e.StartY = this.StartY;
+                for (int j = 0; j < i; j++)
+                    e.StartY += elements[j].Height;
+            }
+
             elements.ForEach(e => e.ReCalculate());
         }
-
-
-        public UIElement Get(int index)
-        {
-            return elements[index];
-        }
-
-        public T Get<T>(int index) where T : UIElement
-        {
-            return (T)elements[index];
-        }
-
     }
 }

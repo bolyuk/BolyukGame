@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace BolyukGame.UI
+namespace BolyukGame.UI.Label
 {
     public class UILabel : UIElement, UIKeyHandle
     {
@@ -28,7 +28,7 @@ namespace BolyukGame.UI
         }
         public Color TextColor { get; set; } = Color.Black;
 
-        public event Action OnClick;
+        public event Action<UIElement> OnClick;
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -44,27 +44,12 @@ namespace BolyukGame.UI
 
         public bool onKeyEvent(KeyEvent args)
         {
-            if (OnClick != null && args.IsOnlyDown(Keys.Enter))
+            if (IsSelectable && OnClick != null && args.IsOnlyDown(Keys.Enter))
             {
-                OnClick?.Invoke();
+                OnClick?.Invoke(this);
                 return true;
             }
             return false;
-        }
-
-        public override void OnWindowResize(float width, float height)
-        {
-
-        }
-
-        public override void ReCalculate()
-        {
-
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using BolyukGame.Shared.Info;
+using Microsoft.Xna.Framework.Input;
+using SharpDX.Direct2D1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,9 +45,9 @@ namespace BolyukGame.Shared
 
     public class KeyEvent
     {
-        public List<Keys> DownKeys;
+        public List<Keys> DownKeys = new List<Keys>();
 
-        public List<Keys> UpKeys;
+        public List<Keys> UpKeys = new List<Keys>();
 
         public bool IsOnlyDown(Keys key)
         {
@@ -55,6 +57,16 @@ namespace BolyukGame.Shared
         public bool IsOnlyUp(Keys key)
         {
             return UpKeys.Count == 1 && UpKeys[0] == key;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is KeyEvent other)
+            {
+                return DownKeys.Equals(other.DownKeys) &&
+                       UpKeys.Equals(other.UpKeys);
+            }
+            return false;
         }
     }
 }

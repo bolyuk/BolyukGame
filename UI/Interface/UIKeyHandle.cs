@@ -10,6 +10,6 @@ namespace BolyukGame.UI.Interface
 {
     public interface UIKeyHandle
     {
-        public bool onKeyEvent(KeyEvent args);
+        public virtual bool onKeyEvent(KeyEvent args) {  return false; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BolyukGame.Shared;
+using BolyukGame.UI.Policy;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,6 +11,14 @@ namespace BolyukGame.UI.Interface
         private int width, height, widthMax, widtMin, heightMax, heightMin;
         private Color background;
         private Texture2D backgroundTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
+
+        public UIContainer Parent { get; set; }
+
+        public bool IsSelectable { get; set; } = true;
+
+        public IPositionPolicy PositionPolicy { get; set; }
+
+        public Guid id { get; set; } = Guid.NewGuid();
 
         public Color Background
         {
@@ -36,6 +45,10 @@ namespace BolyukGame.UI.Interface
         public int StartDrawY => StartY + Padding[1];
 
         #endregion DrawPosition
+
+        public int LogicalWidth { get => EndX - StartX; }
+
+        public int LogicalHeight { get => EndY - StartY; }
 
         #region Width
 
@@ -127,7 +140,7 @@ namespace BolyukGame.UI.Interface
 
         public int[] Padding { get; } = new int[4];
 
-        public abstract void Update(GameTime gameTime);
+        public virtual void Update(GameTime gameTime) { }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -137,8 +150,16 @@ namespace BolyukGame.UI.Interface
             }
         }
 
-        public abstract void OnWindowResize(float window_width, float window_height);
+        public virtual void OnParentResized(int window_width, int window_height) 
+        { 
+            if(PositionPolicy != null)
+                PositionPolicy.Execute(window_width, window_height, this, Parent);
+            ReCalculate(); 
+        }
 
-        public abstract void ReCalculate();
+        public virtual void ReCalculate()
+        {
+
+        }
     }
 }
