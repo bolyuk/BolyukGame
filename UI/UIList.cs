@@ -25,8 +25,18 @@ namespace BolyukGame.UI
             CalculateSize();
         }
 
+        public void Clear()
+        {
+            var copy = elements.ToArray();
+            foreach (var element in copy)
+                RemoveElement(element);
+        }
+
         public override void CalculateSize()
         {
+            if (elements.Count == 0)
+                return;
+
             base.CalculateSize();
 
             this.Height = elements.Sum(e => e.Height);

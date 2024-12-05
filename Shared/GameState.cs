@@ -8,7 +8,9 @@ namespace BolyukGame.Shared
     {
         public static IGameController Controller { get; set; }
 
-        public static LobbyInfo CurrentLobby { get; set; }
+        public static LobbyInfoExtended CurrentLobby { get; set; }
+
+        public static GameConfig Config { get; set; } = new GameConfig();
 
         //MonoGame
         public static GraphicsDevice GraphicsDevice { get; set; }

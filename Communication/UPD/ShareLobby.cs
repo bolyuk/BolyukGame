@@ -12,9 +12,9 @@ namespace BolyukGame.Communication.UPD
 {
     public class ShareLobby
     {
-        private static CancellationTokenSource token_source;
+        private static CancellationTokenSource token_source = null;
 
-        public static async Task ExecAsync(LobbyInfo lobby)
+        public static async Task ExecAsync(LobbyInfoSmall lobby)
         {
             if (token_source != null)
             {

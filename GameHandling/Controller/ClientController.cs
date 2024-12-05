@@ -1,36 +1,52 @@
-﻿using System;
-using System.Net.WebSockets;
-using System.Threading;
-using BolyukGame.GameHandling.Container;
+﻿using BolyukGame.GameHandling.Container;
 using BolyukGame.Shared;
+using System;
+using WebSocketSharp;
 
 namespace BolyukGame.GameHandling
 {
     public class ClientController : IGameController
     {
-        public override async void TryStartSessionAsync(string ip)
-        {
-            using (var webSocket = new ClientWebSocket())
-            {
-                await webSocket.ConnectAsync(new Uri($"ws://{ip}:{C.server_port}/ws/"), CancellationToken.None);
-                Logger.l("Connected to server.");
-
-                handler = new WebSocketHandler(webSocket);
-
-                while (webSocket.State == WebSocketState.Open)
-                {
-                    var serverMessage = await handler.ReceiveMessageAsync();
-                    if (serverMessage == null)
-                        return;
-
-                    this.AcceptQuery(ByteUtils.Deserialize<Answer>(serverMessage));
-                }
-            }
-        }
-
+        WebSocket connection;
+        private IPlayerGameListener listener;
         public override void SendQuery(Request update)
         {
-           handler.SendMessageAsync(ByteUtils.Serialize(update));
+            connection.Send(ByteUtils.Serialize(update));
+        }
+
+        public override void SetListener(IGameListener listener)
+        {
+            this.listener = listener as IPlayerGameListener;
+        }
+
+        public override void StartSession(string ip)
+        {
+            connection = new WebSocket($"ws://{ip}:{C.server_port}");
+
+            connection.OnClose += (a, s) => listener.OnSessionEnds();
+
+            connection.OnOpen += (a, s) => listener.OnSessionStarts();
+
+            connection.OnError += (a, s) => listener.OnError(s);
+
+            connection.OnMessage += (a, s) =>
+            {
+                if (s.IsBinary && s.RawData != null)
+                {
+                    var parsed = ByteUtils.Deserialize<Answer>(s.RawData);
+                    if (parsed == null)
+                        return;
+                    listener.acceptQuery(parsed);
+                }
+            };
+
+            connection.Connect();
+        }
+
+        public override void StopSession()
+        {
+            connection.Close();
+            listener.OnSessionEnds();
         }
     }
 }

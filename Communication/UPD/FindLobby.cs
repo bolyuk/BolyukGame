@@ -15,7 +15,7 @@ namespace BolyukGame.Communication.UPD
         private static CancellationTokenSource tokenSource;
         private static Task receiveTask;
 
-        public static async Task ExecAsync(Action<LobbyInfo> onFind)
+        public static async Task ExecAsync(Action<LobbyInfoSmall> onFind)
         {
             if (tokenSource != null)
             {
@@ -44,7 +44,7 @@ namespace BolyukGame.Communication.UPD
                             {
                                 Logger.l($"Server found at: {result.RemoteEndPoint.Address}");
 
-                                var lobby = ByteUtils.Deserialize<LobbyInfo>(answer.Body);
+                                var lobby = ByteUtils.Deserialize<LobbyInfoSmall>(answer.Body);
                                 lobby.Ip = result.RemoteEndPoint.Address.ToString();
                                 onFind?.Invoke(lobby);
                             }

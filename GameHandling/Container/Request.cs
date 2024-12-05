@@ -18,5 +18,6 @@ namespace BolyukGame.GameHandling
         Input = 2,
         Config = 3,
         ServerSearch = 4,
+        PlayerInfo = 5,
     }
 }

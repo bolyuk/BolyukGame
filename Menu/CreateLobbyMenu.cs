@@ -55,15 +55,15 @@ namespace BolyukGame.Menu
 
             create_but.OnClick += (e) =>
             {
-                var lobby = new LobbyInfo() { 
-                    Players = 1, 
+                var lobby = new LobbyInfoExtended() { 
+                    PlayersCount = 1, 
                     Name = question.getAnswer()
                 };
 
                 ShareLobby.ExecAsync(lobby);
 
                 var server = new ServerController();
-                server.TryStartSessionAsync("localhost");
+                server.StartSession("localhost");
 
                 GameState.Controller = server;
                 GameState.CurrentLobby = lobby;

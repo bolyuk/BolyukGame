@@ -1,52 +1,45 @@
 ﻿using BolyukGame.GameHandling.Container;
+using BolyukGame.Shared.Info;
+using Fleck;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebSocketSharp;
 
 namespace BolyukGame.GameHandling
 {
     public abstract class IGameController
     {
-        protected WebSocketHandler handler;
-        protected GameListener listener;
+        public abstract void StartSession(string ip);
 
-        public virtual void TryStartSessionAsync(string ip)
-        { }
+        public abstract void StopSession();
 
-        public async void StopSession()
-        {
-            await handler.CloseConnectionAsync();
-        }
+        public abstract void SendQuery(Request update);
 
-        public virtual void SendQuery(Request update)
-        {
-            AcceptQuery(QueryWork(update));
-        }
-
-        public virtual void AcceptQuery(Answer update)
-        {
-
-        }
-
-        public virtual Answer QueryWork(Request update)
-        {
-            return null;
-        }
-
-        public void SetListener(GameListener listener)
-        {
-            this.listener = listener;
-        }
+        public abstract void SetListener(IGameListener listener);
 
     }
 
-    public interface GameListener
+    public interface IGameListener
     {
-        public virtual void acceptQuery(Answer update)
-        {
+        public void acceptQuery(Answer update);
+    }
 
-        }
+    public interface IPlayerGameListener : IGameListener
+    {
+        public void OnSessionEnds();
 
-        public virtual Answer queryWork(Request update)
-        {
-            return null;
-        }
+        public void OnSessionStarts();
+
+        public void OnError(ErrorEventArgs args);
+        
+    }
+
+    public interface IServerGameListener : IGameListener
+    {
+        public Answer QueryWork(Request update);
+
+        public void OnPlayerLeave(PlayerContainer palyer);
+
+        public void OnPlayerReqistered(PlayerContainer palyer);
     }
 }

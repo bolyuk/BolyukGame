@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BolyukGame.Shared.Info
 {
-    public class LobbyInfo
+    public class LobbyInfoSmall
     {
-        public int Players { get; set; }
+        public int PlayersCount { get; set; }
 
         public string Name { get; set; }
         public string Ip { get; set; }
@@ -12,9 +13,9 @@ namespace BolyukGame.Shared.Info
 
         public override bool Equals(object obj)
         {
-            if (obj is LobbyInfo other)
+            if (obj is LobbyInfoSmall other)
             {
-                return Players == other.Players &&
+                return PlayersCount == other.PlayersCount &&
                        Name == other.Name &&
                        Ip == other.Ip;
             }
@@ -23,7 +24,7 @@ namespace BolyukGame.Shared.Info
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Players, Name, Ip);
+            return HashCode.Combine(PlayersCount, Name, Ip);
         }
     }
 }

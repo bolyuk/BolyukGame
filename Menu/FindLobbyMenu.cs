@@ -1,5 +1,6 @@
 ﻿using BolyukGame.Communication.UPD;
 using BolyukGame.GameHandling;
+using BolyukGame.GameHandling.Controller.Listeners;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
 using BolyukGame.UI;
@@ -14,7 +15,7 @@ namespace BolyukGame.Menu
 {
     public class FindLobbyMenu : IMenu
     {
-        private List<LobbyInfo> lobbies = new List<LobbyInfo>();
+        private List<LobbyInfoSmall> lobbies = new List<LobbyInfoSmall>();
         public FindLobbyMenu()
         {
             var info = new UILabel()
@@ -53,13 +54,13 @@ namespace BolyukGame.Menu
             FindLobby.ExecAsync((l) => LobbyResolve(l, list));
         }
 
-        private void LobbyResolve(LobbyInfo l, UIList list)
+        private void LobbyResolve(LobbyInfoSmall l, UIList list)
         {
             if (list.Get(l.Id) == null)
             {
                 UIDispatcher.BeforeUpdate(() =>
                 {
-                    var label = new UISelfDesctructLabel() { id = l.Id, Text = $"{l.Name} ({l.Players})", TTL = 5000 };
+                    var label = new UISelfDesctructLabel() { id = l.Id, Text = $"{l.Name} ({l.PlayersCount})", TTL = 5000 };
                     label.OnClick += (e) => Connect(e);
 
                     list.InsertElement(1, label);
@@ -71,7 +72,7 @@ namespace BolyukGame.Menu
                 {
                     lobbies.Remove(l);
                     var c = list.Get<UISelfDesctructLabel>(l.Id);
-                    c.Text = $"{l.Name} ({l.Players})";
+                    c.Text = $"{l.Name} ({l.PlayersCount})";
                     c.TTL = 5000;
                 });
             }
@@ -84,7 +85,7 @@ namespace BolyukGame.Menu
             var l = lobbies.Where(e => e.Id == element.id).FirstOrDefault();
             if (l == null)
                 return;
-            GameState.CurrentLobby = l;
+            GameState.CurrentLobby = new LobbyInfoExtended() { Id = l.Id};
 
             //have to be edited
             //l.Ip = "localhost";
@@ -92,10 +93,10 @@ namespace BolyukGame.Menu
             var client = new ClientController();
             try
             {
-                client.TryStartSessionAsync(l.Ip);
-
                 FindLobby.Stop();
+                GameState.Controller = client;
                 GameState.Game.NavigateTo(new LobbyMenu());
+                client.StartSession(l.Ip);
             }
             catch(Exception e)
             {

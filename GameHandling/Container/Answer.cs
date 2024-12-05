@@ -16,5 +16,6 @@ namespace BolyukGame.GameHandling.Container
         ServerFound=1,
         LobbyConfig=2,
         Kicked=3,
+        PlayerInfo = 4,
     }
 }

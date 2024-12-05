@@ -1,128 +1,92 @@
-﻿using System.Net.WebSockets;
-using System.Net;
-using System.Threading.Tasks;
+﻿using BolyukGame.GameHandling.Container;
 using BolyukGame.Shared;
+using BolyukGame.Shared.Info;
+using Fleck;
 using System;
-using System.Threading;
+using System.Collections.Generic;
 
 namespace BolyukGame.GameHandling
 {
     public class ServerController : IGameController
     {
-        public override async void TryStartSessionAsync(string ip)
+        private WebSocketServer server;
+        private List<IWebSocketConnection> clients = new List<IWebSocketConnection>();
+        private IServerGameListener listener;
+
+        public override void SendQuery(Request update)
         {
-            var httpListener = new HttpListener();
-            httpListener.Prefixes.Add($"http://{ip}:{C.server_port}/ws/");
-            httpListener.Start();
-            Logger.l($"WebSocket server started at ws://{ip}:{C.server_port}/ws/");
+            listener.acceptQuery(listener.QueryWork(update));
+        }
 
-            try
+        public override void StartSession(string ip)
+        {
+
+            server = new WebSocketServer($"ws://0.0.0.0:{C.server_port}");
+
+            server.Start(socket =>
             {
-                while (httpListener.IsListening)
-                {
-                    try
-                    {
-                        HttpListenerContext context;
-                        try
-                        {
-                           context = await httpListener.GetContextAsync();
 
-                        }
-                        catch (Exception ex)
+                socket.OnClose += () =>
+                {
+                    if (clients.Contains(socket))
+                        clients.Remove(socket);
+                };
+
+                socket.OnBinary += (msg) =>
+                {
+                    var parsed = ByteUtils.Deserialize<Request>(msg);
+
+                    if (parsed == null)
+                    {
+                        socket.Close();
+                        return;
+                    }
+
+                    if (!clients.Contains(socket))
+                    {
+                        if(parsed.Type != RequestType.Join)
                         {
-                            Console.WriteLine(ex);
+                            socket.Close();
                             return;
                         }
 
-                        // Проверяем, является ли запрос WebSocket
-                        if (context.Request.IsWebSocketRequest)
+                        var data = ByteUtils.Deserialize<PlayerContainer>(parsed.Body);
+
+                        if (data == null)
                         {
-                            // Принимаем WebSocket
-                            var webSocketContext = await context.AcceptWebSocketAsync(null);
-                            var webSocket = webSocketContext.WebSocket;
-
-                            Logger.l("Client connected.");
-
-                            // Создаём обработчик WebSocket
-                            handler = new WebSocketHandler(webSocket);
-
-                            // Асинхронно обрабатываем соединение
-                            _ = HandleWebSocketConnectionAsync(webSocket);
+                            socket.Close();
+                            return;
                         }
-                        else
-                        {
-                            // Если запрос не WebSocket, возвращаем 400 Bad Request
-                            context.Response.StatusCode = 400;
-                            context.Response.Close();
-                        }
-                    }
-                    catch (HttpListenerException ex) when (ex.ErrorCode == 995)
+
+                        clients.Add(socket);
+                        listener.OnPlayerReqistered(data);
+                    } 
+                    else
                     {
-                        // HttpListener закрыт (например, вызван Close)
-                        Logger.l("HttpListener stopped.");
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.l($"Error processing request: {ex.Message}");
-                    }
-                }
-            }
-            finally
-            {
-                httpListener.Close();
-                Logger.l("HttpListener closed.");
-            }
+                        listener.QueryWork(parsed);
+                    }                    
+                };
+            });
         }
 
-        private async Task HandleWebSocketConnectionAsync(WebSocket webSocket)
+        public override void StopSession()
         {
-            try
-            {
-                while (webSocket.State == WebSocketState.Open)
-                {
-                    try
-                    {
-                        // Получаем сообщение от клиента
-                        var message = await handler.ReceiveMessageAsync();
-
-                        if (message == null)
-                        {
-                            Logger.l("Client disconnected.");
-                            break;
-                        }
-
-                        // Обрабатываем сообщение
-                        var request = ByteUtils.Deserialize<Request>(message);
-                        OnQueryRecieved(request);
-                    }
-                    catch (WebSocketException ex)
-                    {
-                        Logger.l($"WebSocket error: {ex.Message}");
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.l($"Error processing WebSocket message: {ex.Message}");
-                    }
-                }
-            }
-            finally
-            {
-                if (webSocket?.State == WebSocketState.Open)
-                {
-                    await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Connection closed", CancellationToken.None);
-                }
-
-                webSocket?.Dispose();
-                Logger.l("WebSocket connection closed.");
-            }
+            clients.ForEach(c => c.Close());
+            clients.Clear();
+            server.Dispose();
+            server = null;
+           
         }
 
-        private void OnQueryRecieved(Request update)
+        public void Broadcast(Answer request)
         {
-            handler.SendMessageAsync(ByteUtils.Serialize(this.QueryWork(update)));
+            var parsed = ByteUtils.Serialize(request);
+            clients.ForEach(client => client.Send(parsed));
+        }
+
+        public override void SetListener(IGameListener listener)
+        {
+            this.listener = listener as IServerGameListener;
         }
     }
 }
-   
