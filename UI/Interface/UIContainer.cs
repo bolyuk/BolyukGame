@@ -201,9 +201,9 @@ namespace BolyukGame.UI.Interface
             removeRequests.Add(element);
         }
 
-        public override void ReCalculate()
+        public override void CalculateSize()
         {
-            elements.ForEach(e => e.ReCalculate());
+            elements.ForEach(e => e.CalculateSize());
         }
 
         public virtual UIElement Get(int index)

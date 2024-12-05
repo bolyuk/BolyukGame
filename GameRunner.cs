@@ -81,7 +81,7 @@ namespace BolyukGame
         {
             this.currentMenu = menu;
             currentMenu.OnResize(WindowWidth, WindowHeight);
-            Thread.Sleep(100);
+            //Thread.Sleep(100);
         }
     }
 }

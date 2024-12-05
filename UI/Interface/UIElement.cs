@@ -173,7 +173,7 @@ namespace BolyukGame.UI.Interface
         {
             if (PositionPolicy != null)
                 PositionPolicy.Execute(window_width, window_height, this, Parent);
-            ReCalculate();
+            CalculateSize();
         }
 
         public virtual void ForceOnParentResized()
@@ -181,7 +181,7 @@ namespace BolyukGame.UI.Interface
             OnParentResized(GameState.Game.WindowWidth, GameState.Game.WindowHeight);
         }
 
-        public virtual void ReCalculate()
+        public virtual void CalculateSize()
         {
 
         }

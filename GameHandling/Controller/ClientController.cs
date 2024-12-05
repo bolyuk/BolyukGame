@@ -8,11 +8,11 @@ namespace BolyukGame.GameHandling
 {
     public class ClientController : IGameController
     {
-        public override async void tryStartSessionAsync()
+        public override async void TryStartSessionAsync(string ip)
         {
             using (var webSocket = new ClientWebSocket())
             {
-                await webSocket.ConnectAsync(new Uri($"ws://localhost:{C.server_port}/ws/"), CancellationToken.None);
+                await webSocket.ConnectAsync(new Uri($"ws://{ip}:{C.server_port}/ws/"), CancellationToken.None);
                 Logger.l("Connected to server.");
 
                 handler = new WebSocketHandler(webSocket);
@@ -23,12 +23,12 @@ namespace BolyukGame.GameHandling
                     if (serverMessage == null)
                         return;
 
-                    this.acceptQuery(ByteUtils.Deserialize<Answer>(serverMessage));
+                    this.AcceptQuery(ByteUtils.Deserialize<Answer>(serverMessage));
                 }
             }
         }
 
-        public override void sendQuery(Request update)
+        public override void SendQuery(Request update)
         {
            handler.SendMessageAsync(ByteUtils.Serialize(update));
         }

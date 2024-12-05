@@ -4,15 +4,17 @@ namespace BolyukGame.GameHandling.Container
 {
     public class Answer
     {
-        public byte[] body { get; set; }
-        public AnswerType type { get; set; }
+        public byte[] Body { get; set; }
+        public AnswerType Type { get; set; }
 
-        public Guid lobby_id { get; set; }
+        public Guid LobbyId { get; set; }
     }
 
     public enum AnswerType
     {
         Default=0,
         ServerFound=1,
+        LobbyConfig=2,
+        Kicked=3,
     }
 }

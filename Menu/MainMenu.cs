@@ -13,13 +13,12 @@ namespace BolyukGame.Menu
         {
             UIList list = new UIList()
             {
-                HighlightColor = Color.Yellow,
                 PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Center }
             };
 
             var splash = new UILabel()
             {
-                Text = "A    Bolyuk    GAME!",
+                Text = "A   Bolyuk   GAME!",
                 IsSelectable = false,
                 TextScale = 2f,
                 TextColor = Color.DarkRed,
@@ -45,6 +44,7 @@ namespace BolyukGame.Menu
             var exit_but = new UILabel()
             {
                 Text = "Exit",
+                TextSelectedColor = Color.DarkRed,
                 Padding = new int[4] { 0, 0, 0, 10 },
                 PositionPolicy = new StickyPolicy() {Vertical=Sticky.Bottom, Horizontal=Sticky.Center }
             };

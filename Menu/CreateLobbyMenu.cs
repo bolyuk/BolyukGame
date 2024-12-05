@@ -1,4 +1,8 @@
-﻿using BolyukGame.Shared;
+﻿using BolyukGame.Communication.UPD;
+using BolyukGame.GameHandling;
+using BolyukGame.Shared;
+using BolyukGame.Shared.Info;
+using BolyukGame.UI;
 using BolyukGame.UI.Label;
 using BolyukGame.UI.Policy;
 
@@ -29,6 +33,45 @@ namespace BolyukGame.Menu
             };
 
             RegUI(back_but);
+
+            var list = new UIList()
+            {
+                StartY = back_but.LogicalHeight + 40,
+                Padding = new int[] { 10, 0, 0, 0 },
+            };
+
+            var question = new UIEditLable() { Question = "Lobby  Name:" };
+
+            list.AddElement(question);
+
+            var create_but = new UILabel()
+            {
+                Text = "Create ->",
+                Padding = new int[4] { 0, 0, 10, 10 },
+                PositionPolicy = new StickyPolicy() { Horizontal= Sticky.Right, Vertical=Sticky.Bottom},
+            };
+
+            RegUI(create_but);
+
+            create_but.OnClick += (e) =>
+            {
+                var lobby = new LobbyInfo() { 
+                    Players = 1, 
+                    Name = question.getAnswer()
+                };
+
+                ShareLobby.ExecAsync(lobby);
+
+                var server = new ServerController();
+                server.TryStartSessionAsync("localhost");
+
+                GameState.Controller = server;
+                GameState.CurrentLobby = lobby;
+                GameState.Game.NavigateTo(new LobbyMenu());
+            };
+
+
+            RegUI(list);
             Focus(back_but);
         }
     }

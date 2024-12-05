@@ -5,19 +5,40 @@ namespace BolyukGame.GameHandling
     public abstract class IGameController
     {
         protected WebSocketHandler handler;
+        protected GameListener listener;
 
-        public abstract void tryStartSessionAsync();
+        public virtual void TryStartSessionAsync(string ip)
+        { }
 
-        public async void stopSession()
+        public async void StopSession()
         {
             await handler.CloseConnectionAsync();
         }
 
-        public virtual void sendQuery(Request update)
+        public virtual void SendQuery(Request update)
         {
-            acceptQuery(queryWork(update));
+            AcceptQuery(QueryWork(update));
         }
 
+        public virtual void AcceptQuery(Answer update)
+        {
+
+        }
+
+        public virtual Answer QueryWork(Request update)
+        {
+            return null;
+        }
+
+        public void SetListener(GameListener listener)
+        {
+            this.listener = listener;
+        }
+
+    }
+
+    public interface GameListener
+    {
         public virtual void acceptQuery(Answer update)
         {
 
@@ -26,7 +47,6 @@ namespace BolyukGame.GameHandling
         public virtual Answer queryWork(Request update)
         {
             return null;
-        }       
-
+        }
     }
 }

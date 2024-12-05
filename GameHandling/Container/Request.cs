@@ -5,11 +5,10 @@ namespace BolyukGame.GameHandling
 {
     public class Request
     {
-       //public Key[] keys { get; set; }
-        public byte[] body { get; set; }
-        public RequestType type { get; set; }
+        public byte[] Body { get; set; }
+        public RequestType Type { get; set; }
 
-        public Guid lobby_id { get; set; }
+        public Guid LobbyId { get; set; }
     }
 
     public enum RequestType

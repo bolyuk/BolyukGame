@@ -1,4 +1,5 @@
 ﻿using BolyukGame.Shared.Info;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.Direct2D1;
 using System;
@@ -45,9 +46,11 @@ namespace BolyukGame.Shared
 
     public class KeyEvent
     {
-        public List<Keys> DownKeys = new List<Keys>();
+        public List<Keys> DownKeys { get; set; }  = new List<Keys>();
 
-        public List<Keys> UpKeys = new List<Keys>();
+        public List<Keys> UpKeys { get; set; }  = new List<Keys>();
+
+        public GameTime GameTime { get; set; }
 
         public bool IsOnlyDown(Keys key)
         {

@@ -1,16 +1,20 @@
 ﻿using BolyukGame.Communication.UPD;
+using BolyukGame.GameHandling;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
 using BolyukGame.UI;
+using BolyukGame.UI.Interface;
 using BolyukGame.UI.Label;
 using BolyukGame.UI.Policy;
-using Microsoft.Xna.Framework;
-using System.Threading;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BolyukGame.Menu
 {
     public class FindLobbyMenu : IMenu
     {
+        private List<LobbyInfo> lobbies = new List<LobbyInfo>();
         public FindLobbyMenu()
         {
             var info = new UILabel()
@@ -25,15 +29,15 @@ namespace BolyukGame.Menu
 
             UIList list = new UIList()
             {
-                HighlightColor = Color.Yellow,
                 PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Center }
             };
 
             list.AddElement(new UILoadingLabel() { ShownText = "Searching", IsSelectable = false, IsLoadingShown = true });
 
-            var back_but = new UILabel() { 
-                Text = "<- Back", 
-                Padding = new int[4] { 10, 10, 0, 0 } 
+            var back_but = new UILabel()
+            {
+                Text = "<- Back",
+                Padding = new int[4] { 10, 10, 0, 0 }
             };
             back_but.OnClick += (e) =>
             {
@@ -46,7 +50,7 @@ namespace BolyukGame.Menu
             Focus(back_but);
 
 
-            FindLobby.ExecAsync((l) => LobbyResolve(l, list));        
+            FindLobby.ExecAsync((l) => LobbyResolve(l, list));
         }
 
         private void LobbyResolve(LobbyInfo l, UIList list)
@@ -55,14 +59,47 @@ namespace BolyukGame.Menu
             {
                 UIDispatcher.BeforeUpdate(() =>
                 {
-                    list.InsertElement(1, new UISelfDesctructLabel() { id = l.Id, Text = $"{l.Name} ({l.Players})", TTL = 5000 });
-                });            
+                    var label = new UISelfDesctructLabel() { id = l.Id, Text = $"{l.Name} ({l.Players})", TTL = 5000 };
+                    label.OnClick += (e) => Connect(e);
+
+                    list.InsertElement(1, label);
+                });
             }
             else
             {
-                var c = list.Get<UISelfDesctructLabel>(l.Id);
-                c.Text = $"{l.Name} ({l.Players})";
-                c.TTL = 5000;
+                UIDispatcher.BeforeUpdate(() =>
+                {
+                    lobbies.Remove(l);
+                    var c = list.Get<UISelfDesctructLabel>(l.Id);
+                    c.Text = $"{l.Name} ({l.Players})";
+                    c.TTL = 5000;
+                });
+            }
+
+            lobbies.Add(l);
+        }
+
+        private void Connect(UIElement element)
+        {
+            var l = lobbies.Where(e => e.Id == element.id).FirstOrDefault();
+            if (l == null)
+                return;
+            GameState.CurrentLobby = l;
+
+            //have to be edited
+            //l.Ip = "localhost";
+
+            var client = new ClientController();
+            try
+            {
+                client.TryStartSessionAsync(l.Ip);
+
+                FindLobby.Stop();
+                GameState.Game.NavigateTo(new LobbyMenu());
+            }
+            catch(Exception e)
+            {
+                Logger.l(e);
             }
         }
     }

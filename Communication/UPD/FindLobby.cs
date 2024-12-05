@@ -29,7 +29,7 @@ namespace BolyukGame.Communication.UPD
             {
                 udpClient.EnableBroadcast = true;
                 var broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, C.udp_port);
-                var request = ByteUtils.Serialize(new Request() { type = RequestType.ServerSearch });
+                var request = ByteUtils.Serialize(new Request() { Type = RequestType.ServerSearch });
 
                 receiveTask = Task.Run(async () =>
                 {
@@ -40,11 +40,11 @@ namespace BolyukGame.Communication.UPD
                             var result = await udpClient.ReceiveAsync(token);
                             var answer = ByteUtils.Deserialize<Answer>(result.Buffer);
 
-                            if (answer != null && answer.type == AnswerType.ServerFound)
+                            if (answer != null && answer.Type == AnswerType.ServerFound)
                             {
                                 Logger.l($"Server found at: {result.RemoteEndPoint.Address}");
 
-                                var lobby = ByteUtils.Deserialize<LobbyInfo>(answer.body);
+                                var lobby = ByteUtils.Deserialize<LobbyInfo>(answer.Body);
                                 lobby.Ip = result.RemoteEndPoint.Address.ToString();
                                 onFind?.Invoke(lobby);
                             }

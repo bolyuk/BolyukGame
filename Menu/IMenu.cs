@@ -25,6 +25,7 @@ namespace BolyukGame.Menu
             {
                 DownKeys = keyHandling.GetPressedKeys(),
                 UpKeys = keyHandling.GetReleasedKeys(),
+                GameTime = gameTime,
             };
 
             bool isKeyHandlingNeeded = keyEvent.UpKeys.Any() || keyEvent.DownKeys.Any();

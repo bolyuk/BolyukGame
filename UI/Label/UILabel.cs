@@ -11,7 +11,8 @@ namespace BolyukGame.UI.Label
     {
         private string text;
         private float textScale = 1f;
-        private Vector2 textSize = Vector2.Zero; // Сохранённый размер текста
+        private double elapseTimeKeyshandled = 0;
+        private Vector2 textSize = Vector2.Zero;
 
         public float TextScale
         {
@@ -21,10 +22,12 @@ namespace BolyukGame.UI.Label
                 if (Math.Abs(textScale - value) > float.Epsilon)
                 {
                     textScale = value;
-                    ReCalculate();
+                    CalculateSize();
                 }
             }
         }
+
+        public bool DrawShadowOnSelected { get; set; } = true;
 
         public string Text
         {
@@ -34,7 +37,7 @@ namespace BolyukGame.UI.Label
                 if (text != value)
                 {
                     text = value;
-                    ReCalculate();
+                    CalculateSize();
                 }
             }
         }
@@ -45,7 +48,13 @@ namespace BolyukGame.UI.Label
         public float Rotation { get; set; }
         public Color TextColor { get; set; } = Color.Black;
 
+        public Color? TextSelectedColor { get; set; } = null;
+
+        public Color ShadowColor {  get; set; } = Color.Gray;
+
         public event Action<UIElement> OnClick;
+
+        public long KeyHandlingCoolDown { get; set; } = 25;
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -65,11 +74,32 @@ namespace BolyukGame.UI.Label
                 textPosition = AnimationPolicy.ModifyPosition(gameTime, textPosition);
             }
 
+            var textColor = TextColor;
+
+            if(DrawShadowOnSelected && IsFocused)
+            {
+                spriteBatch.DrawString(
+                GameState.Font,
+                text,
+                textPosition,
+                ShadowColor,
+                Rotation,
+                origin,
+                TextScale,
+                SpriteEffects.None,
+                0
+            );
+                textPosition = new Vector2(textPosition.X-5, textPosition.Y-5);
+            }
+
+            if (IsFocused && TextSelectedColor != null)
+                textColor = TextSelectedColor.Value;
+
             spriteBatch.DrawString(
                 GameState.Font,
                 text,
                 textPosition,
-                TextColor,
+                textColor,
                 Rotation,
                 origin,
                 TextScale,
@@ -78,9 +108,15 @@ namespace BolyukGame.UI.Label
             );
         }
 
-        public bool onKeyEvent(KeyEvent args)
+        public virtual bool onKeyEvent(KeyEvent args)
         {
-            if (IsSelectable && OnClick != null && args.IsOnlyDown(Keys.Enter))
+
+            if (elapseTimeKeyshandled < KeyHandlingCoolDown || args.DownKeys.Count != 0)
+                return true;
+
+            elapseTimeKeyshandled = 0;
+
+            if (IsSelectable && OnClick != null && args.IsOnlyUp(Keys.Enter))
             {
                 OnClick?.Invoke(this);
                 return true;
@@ -91,11 +127,11 @@ namespace BolyukGame.UI.Label
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
+            elapseTimeKeyshandled += gameTime.ElapsedGameTime.TotalMilliseconds;
             Background = IsFocused ? Color.Yellow : Color.Transparent;
         }
 
-        public override void ReCalculate()
+        public override void CalculateSize()
         {
             if (!string.IsNullOrEmpty(Text) && GameState.Font != null)
             {

@@ -30,9 +30,9 @@ namespace BolyukGame.Communication.UPD
 
                 var answer = new Answer
                 {
-                    type = AnswerType.ServerFound,
-                    body = ByteUtils.Serialize(lobby),
-                    lobby_id = lobby.Id
+                    Type = AnswerType.ServerFound,
+                    Body = ByteUtils.Serialize(lobby),
+                    LobbyId = lobby.Id
                 };
 
                 var response = ByteUtils.Serialize(answer);
@@ -51,7 +51,7 @@ namespace BolyukGame.Communication.UPD
 
                         var request = ByteUtils.Deserialize<Request>(receiveTask.Result.Buffer);
 
-                        if (request == null || request.type != RequestType.ServerSearch)
+                        if (request == null || request.Type != RequestType.ServerSearch)
                             continue; //skip
 
                         Logger.l($"Received: {request.ToString()}");
