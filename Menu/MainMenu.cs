@@ -1,5 +1,6 @@
 ﻿using BolyukGame.Shared;
 using BolyukGame.UI;
+using BolyukGame.UI.Animation;
 using BolyukGame.UI.Label;
 using BolyukGame.UI.Policy;
 using Microsoft.Xna.Framework;
@@ -15,12 +16,30 @@ namespace BolyukGame.Menu
                 HighlightColor = Color.Yellow,
                 PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Center }
             };
-            var first_but = new UILabel() { Text = "Join  Game" };
-            list.AddElement(first_but);
+
+            var splash = new UILabel()
+            {
+                Text = "A    Bolyuk    GAME!",
+                IsSelectable = false,
+                TextScale = 2f,
+                TextColor = Color.DarkRed,
+                Padding = new int[4] { 0, 60, 0, 0 },
+                PositionPolicy = new StickyPolicy()
+                {
+                    Horizontal = Sticky.Center
+                },
+                AnimationPolicy = new OscillatingTransformAnimation()
+            };
+
+            RegUI(splash);
+
+            var join_but = new UILabel() { Text = "Join  Game" };
+            join_but.OnClick += (e) => GameState.Game.NavigateTo(new FindLobbyMenu());
+
+            list.AddElement(join_but);
             list.AddElement(new UILabel() { Text = "Create  Game" });
             list.AddElement(new UILabel() { Text = "Settings" });
 
-            list.Get<UILabel>(0).OnClick += (e) => GameState.Game.NavigateTo(new FindLobbyMenu());
             list.Get<UILabel>(1).OnClick += (e) => GameState.Game.NavigateTo(new CreateLobbyMenu());
 
             var exit_but = new UILabel()
@@ -33,8 +52,9 @@ namespace BolyukGame.Menu
 
             RegUI(exit_but);
             RegUI(list);
+            Focus(list);
 
-            list.ChildFocus(first_but);
+            list.ChildFocus(join_but);
         }
     }
 }

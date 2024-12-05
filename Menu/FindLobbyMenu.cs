@@ -13,6 +13,16 @@ namespace BolyukGame.Menu
     {
         public FindLobbyMenu()
         {
+            var info = new UILabel()
+            {
+                Text = "[Lobby  Searching]",
+                IsSelectable = false,
+                Padding = new int[4] { 0, 10, 10, 0 },
+                PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Right },
+            };
+
+            RegUI(info);
+
             UIList list = new UIList()
             {
                 HighlightColor = Color.Yellow,

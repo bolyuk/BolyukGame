@@ -1,4 +1,5 @@
 ﻿using BolyukGame.Shared;
+using BolyukGame.UI.Animation;
 using BolyukGame.UI.Policy;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,6 +30,8 @@ namespace BolyukGame.UI.Interface
         }
 
         public IPositionPolicy PositionPolicy { get; set; }
+
+        public IAnimationPolicy AnimationPolicy { get; set; }
 
         public Guid id { get; set; } = Guid.NewGuid();
 
@@ -157,6 +160,9 @@ namespace BolyukGame.UI.Interface
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            if (AnimationPolicy != null)
+                AnimationPolicy.OnBeforeDraw(this, gameTime);
+
             if (backgroundTexture != null)
             {
                 spriteBatch.Draw(backgroundTexture, new Rectangle(StartDrawX, StartDrawY, Width, Height), Color.White);
@@ -168,6 +174,11 @@ namespace BolyukGame.UI.Interface
             if (PositionPolicy != null)
                 PositionPolicy.Execute(window_width, window_height, this, Parent);
             ReCalculate();
+        }
+
+        public virtual void ForceOnParentResized()
+        {
+            OnParentResized(GameState.Game.WindowWidth, GameState.Game.WindowHeight);
         }
 
         public virtual void ReCalculate()

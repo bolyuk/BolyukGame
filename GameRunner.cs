@@ -12,8 +12,8 @@ namespace BolyukGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private int previousWidth;
-        private int previousHeight;
+        public int WindowWidth { get; internal set; }
+        public int WindowHeight { get; internal set; }
 
         private IMenu currentMenu;
 
@@ -53,13 +53,13 @@ namespace BolyukGame
 
             currentMenu.InternalUpdate(gameTime);
 
-            if (Window.ClientBounds.Width != previousWidth || Window.ClientBounds.Height != previousHeight)
+            if (GraphicsDevice.Viewport.Width != WindowWidth || GraphicsDevice.Viewport.Height != WindowHeight)
             {              
 
-                previousWidth = Window.ClientBounds.Width;
-                previousHeight = Window.ClientBounds.Height;
+                WindowWidth = GraphicsDevice.Viewport.Width;
+                WindowHeight = GraphicsDevice.Viewport.Height;
 
-                currentMenu.OnResize(previousWidth, previousHeight);
+                currentMenu.OnResize(WindowWidth, WindowHeight);
             }
             // TODO: Add your update logic here
 
@@ -69,7 +69,9 @@ namespace BolyukGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(
+                samplerState: SamplerState.PointClamp
+                );
             currentMenu.InternalDraw(gameTime, _spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
@@ -78,7 +80,7 @@ namespace BolyukGame
         public void NavigateTo(IMenu menu)
         {
             this.currentMenu = menu;
-            currentMenu.OnResize(previousWidth, previousHeight);
+            currentMenu.OnResize(WindowWidth, WindowHeight);
             Thread.Sleep(100);
         }
     }
