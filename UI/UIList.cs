@@ -12,7 +12,7 @@ namespace BolyukGame.UI
 {
     public class UIList : UIContainer
     {
-        private int current = 0;
+        //private int current = 0;
 
         private Texture2D highlightTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
         private Color highhlightColor;
@@ -29,40 +29,42 @@ namespace BolyukGame.UI
 
         public override bool onKeyEvent(KeyEvent args)
         {
-            if (args.IsOnlyUp(Keys.Down))
-            {
-                if(current == elements.Count - 1)
-                    return false;
-                current++;
-                return true;
-            }
-            if (args.IsOnlyUp(Keys.Up))
-            {
-                if (current == 0)
-                    return false;
-                current--;
-                return true;
-            }
+            //if (args.IsOnlyUp(Keys.Down))
+            //{
+            //    if(current == elements.Count - 1)
+            //        return false;
+            //    current++;
+            //    return true;
+            //}
+            //if (args.IsOnlyUp(Keys.Up))
+            //{
+            //    if (current == 0)
+            //        return false;
+            //    current--;
+            //    return true;
+            //}
 
-            if (elements[current] is UIKeyHandle keyHandle)
-            {
-              return keyHandle.onKeyEvent(args);
-            }
-            return false;
+            //if (elements[current] is UIKeyHandle keyHandle)
+            //{
+            //  return keyHandle.onKeyEvent(args);
+            //}
+            //return false;
+           return base.onKeyEvent(args);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < elements.Count; i++)
-            {
-                if (i == current)
-                {
-                    var highlightRect = new Rectangle(elements[i].StartX-1, elements[i].StartY-1, elements[i].LogicalWidth+1, elements[i].LogicalHeight+1);
-                    spriteBatch.Draw(highlightTexture, highlightRect, Color.White);
-                }
+            //for (int i = 0; i < elements.Count; i++)
+            //{
+            //    if (elements[i] == FocusedElement)
+            //    {
+            //        var highlightRect = new Rectangle(elements[i].StartX-1, elements[i].StartY-1, elements[i].LogicalWidth+1, elements[i].LogicalHeight+1);
+            //        spriteBatch.Draw(highlightTexture, highlightRect, Color.White);
+            //    }
 
-                elements[i].Draw(gameTime, spriteBatch);
-            }
+            //    elements[i].Draw(gameTime, spriteBatch);
+            //}
+            base.Draw(gameTime, spriteBatch);
         }
 
         public override void AddElement(UIElement element)

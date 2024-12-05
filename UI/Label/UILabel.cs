@@ -34,11 +34,12 @@ namespace BolyukGame.UI.Label
         {
             base.Draw(gameTime, spriteBatch);
 
-            if (!string.IsNullOrEmpty(Text))
-            {
-                var textPosition = new Vector2(StartDrawX, StartDrawY);
-                spriteBatch.DrawString(GameState.Font, text, textPosition, TextColor);
-            }
+            if (string.IsNullOrEmpty(Text))
+                return;
+
+            var textPosition = new Vector2(StartDrawX, StartDrawY);
+            spriteBatch.DrawString(GameState.Font, text, textPosition, TextColor);
+
 
         }
 
@@ -49,7 +50,16 @@ namespace BolyukGame.UI.Label
                 OnClick?.Invoke(this);
                 return true;
             }
-            return false;
+            return Parent.TryMoveFromChild(this, args);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+            if (IsFocused)
+                Background = Color.Yellow;
+            else
+                Background = Color.Transparent;
         }
     }
 }

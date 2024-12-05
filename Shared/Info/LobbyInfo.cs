@@ -4,26 +4,26 @@ namespace BolyukGame.Shared.Info
 {
     public class LobbyInfo
     {
-        public int players { get; set; }
+        public int Players { get; set; }
 
-        public string name { get; set; }
-        public string ip { get; set; }
-        public Guid id { get; set; } = Guid.NewGuid();
+        public string Name { get; set; }
+        public string Ip { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public override bool Equals(object obj)
         {
             if (obj is LobbyInfo other)
             {
-                return players == other.players &&
-                       name == other.name &&
-                       ip == other.ip;
+                return Players == other.Players &&
+                       Name == other.Name &&
+                       Ip == other.Ip;
             }
             return false;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(players, name, ip);
+            return HashCode.Combine(Players, Name, Ip);
         }
     }
 }

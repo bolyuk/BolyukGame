@@ -5,6 +5,7 @@ using BolyukGame.UI;
 using BolyukGame.UI.Label;
 using BolyukGame.UI.Policy;
 using Microsoft.Xna.Framework;
+using System.Threading;
 
 namespace BolyukGame.Menu
 {
@@ -20,30 +21,37 @@ namespace BolyukGame.Menu
 
             list.AddElement(new UILoadingLabel() { ShownText = "Searching", IsSelectable = false, IsLoadingShown = true });
 
-            var back_but = new UILabel() { Text = "<- Back" };
+            var back_but = new UILabel() { 
+                Text = "<- Back", 
+                Padding = new int[4] { 10, 10, 0, 0 } 
+            };
             back_but.OnClick += (e) =>
             {
                 GameState.Game.NavigateTo(new MainMenu());
                 FindLobby.Stop();
             };
 
-            list.AddElement(back_but);
-
             RegUI(list);
+            RegUI(back_but);
+            Focus(back_but);
 
-            FindLobby.ExecAsync((l) => LobbyResolve(l, list));
+
+            FindLobby.ExecAsync((l) => LobbyResolve(l, list));        
         }
 
         private void LobbyResolve(LobbyInfo l, UIList list)
         {
-            if (list.Get(l.id) == null)
+            if (list.Get(l.Id) == null)
             {
-                list.InsertElement(1, new UISelfDesctructLabel() { Text = $"{l.name} ({l.players})", TTL=5000});
+                UIDispatcher.BeforeUpdate(() =>
+                {
+                    list.InsertElement(1, new UISelfDesctructLabel() { id = l.Id, Text = $"{l.Name} ({l.Players})", TTL = 5000 });
+                });            
             }
             else
             {
-                var c = list.Get<UISelfDesctructLabel>(l.id);
-                c.Text = $"{l.name} ({l.players})";
+                var c = list.Get<UISelfDesctructLabel>(l.Id);
+                c.Text = $"{l.Name} ({l.Players})";
                 c.TTL = 5000;
             }
         }

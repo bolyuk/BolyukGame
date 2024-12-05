@@ -32,7 +32,7 @@ namespace BolyukGame.Communication.UPD
                 {
                     type = AnswerType.ServerFound,
                     body = ByteUtils.Serialize(lobby),
-                    lobby_id = lobby.id
+                    lobby_id = lobby.Id
                 };
 
                 var response = ByteUtils.Serialize(answer);

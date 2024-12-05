@@ -9,12 +9,24 @@ namespace BolyukGame.UI.Interface
     public abstract class UIElement
     {
         private int width, height, widthMax, widtMin, heightMax, heightMin;
+        private bool isFocused;
         private Color background;
         private Texture2D backgroundTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
 
         public UIContainer Parent { get; set; }
 
         public bool IsSelectable { get; set; } = true;
+
+        public virtual bool IsFocused
+        {
+            get => isFocused;
+            internal set
+            {
+                isFocused = value;
+                if (value)
+                    OnFocusGot();
+            }
+        }
 
         public IPositionPolicy PositionPolicy { get; set; }
 
@@ -138,7 +150,8 @@ namespace BolyukGame.UI.Interface
 
         #endregion Height
 
-        public int[] Padding { get; } = new int[4];
+
+        public int[] Padding { get; set; } = new int[4];
 
         public virtual void Update(GameTime gameTime) { }
 
@@ -150,14 +163,24 @@ namespace BolyukGame.UI.Interface
             }
         }
 
-        public virtual void OnParentResized(int window_width, int window_height) 
-        { 
-            if(PositionPolicy != null)
+        public virtual void OnParentResized(int window_width, int window_height)
+        {
+            if (PositionPolicy != null)
                 PositionPolicy.Execute(window_width, window_height, this, Parent);
-            ReCalculate(); 
+            ReCalculate();
         }
 
         public virtual void ReCalculate()
+        {
+
+        }
+
+        protected virtual void OnFocusGot()
+        {
+
+        }
+
+        protected virtual void OnFocusLost()
         {
 
         }

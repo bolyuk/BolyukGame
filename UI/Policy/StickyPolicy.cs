@@ -15,22 +15,58 @@ namespace BolyukGame.UI.Policy
 
         public void Execute(int width, int height, UIElement element, UIContainer parent)
         {
-            if(parent == null)
-                throw new ArgumentNullException("parent");
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
 
-            if(Horizontal == Sticky.Center)
-                element.StartX = parent.StartX + (width - element.LogicalWidth) / 2;
+            element.StartX = CalculateHorizontal(width, element, parent);
+            element.StartY = CalculateVertical(height, element, parent);
 
-            if(Vertical == Sticky.Center)
-                element.StartY = parent.StartY + (height - element.LogicalHeight) / 2;
+            // Убедимся, что элемент не выходит за границы
+            element.StartX = Math.Max(parent.StartX, Math.Min(parent.StartX + width - element.LogicalWidth, element.StartX));
+            element.StartY = Math.Max(parent.StartY, Math.Min(parent.StartY + height - element.LogicalHeight, element.StartY));
+        }
+
+        private int CalculateHorizontal(int width, UIElement element, UIContainer parent)
+        {
+            switch (Horizontal)
+            {
+                case Sticky.Center:
+                    return parent.StartX + (width - element.LogicalWidth) / 2;
+                case Sticky.Left:
+                    return parent.StartX;
+                case Sticky.Right:
+                    return parent.StartX + width - element.LogicalWidth;
+                default:
+                    return element.StartX;
+            }
+        }
+
+        private int CalculateVertical(int height, UIElement element, UIContainer parent)
+        {
+            switch (Vertical)
+            {
+                case Sticky.Center:
+                    return parent.StartY + (height - element.LogicalHeight) / 2;
+                case Sticky.Top:
+                    return parent.StartY;
+                case Sticky.Bottom:
+                    return parent.StartY + height - element.LogicalHeight;
+                default:
+                    return element.StartY;
+            }
         }
     }
-
     public enum Sticky
     {
         None,
         Center,
-        Up,
-        Down,
+        Top,
+        Bottom,
+        Left,
+        Right,
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight 
     }
 }

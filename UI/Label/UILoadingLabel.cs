@@ -26,10 +26,12 @@ namespace BolyukGame.UI.Label
             }
         }
 
-        public long ProgressCoolDown { get; set; } = 150;
+        public long ProgressCoolDown { get; set; } = 300;
 
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             if (!IsLoadingShown) return;
 
             elapsedTime += gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -37,9 +39,10 @@ namespace BolyukGame.UI.Label
             if (elapsedTime >= ProgressCoolDown)
             {
                 elapsedTime = 0;
-
-                Text = $"{ShownText} {progressChars[loadingProgress]}";
-                Parent.ReCalculate();
+                UIDispatcher.BeforeUpdate(() =>
+                {
+                    Text = $"{ShownText} {progressChars[loadingProgress]}";
+                });             
 
                 loadingProgress = (loadingProgress + 1) % progressChars.Length;
             }

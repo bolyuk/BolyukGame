@@ -17,7 +17,9 @@ namespace BolyukGame.Menu
 
         public void InternalUpdate(GameTime gameTime)
         {
+            UIDispatcher.ProccessBeforeUpdate();
             BeforeUpdate(gameTime);
+
             keyHandling.Update();
             var keyEvent = new Shared.KeyEvent()
             {
@@ -60,6 +62,11 @@ namespace BolyukGame.Menu
         public void RegUI(UIElement element)
         {
             grid.AddElement(element);
+        }
+
+        public void Focus(UIElement element)
+        {
+            grid.ChildFocus(element);
         }
     }
 }
