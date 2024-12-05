@@ -4,13 +4,14 @@ using BolyukGame.Shared.Info;
 using Fleck;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BolyukGame.GameHandling
 {
     public class ServerController : IGameController
     {
         private WebSocketServer server;
-        private List<IWebSocketConnection> clients = new List<IWebSocketConnection>();
+        private Dictionary<IWebSocketConnection, PlayerContainer> clients = new Dictionary<IWebSocketConnection, PlayerContainer>();
         private IServerGameListener listener;
 
         public override void SendQuery(Request update)
@@ -28,8 +29,12 @@ namespace BolyukGame.GameHandling
 
                 socket.OnClose += () =>
                 {
-                    if (clients.Contains(socket))
+                    if (clients.TryGetValue(socket, out var client))
+                    {
+                        listener.OnPlayerLeave(client);
                         clients.Remove(socket);
+                    }
+                        
                 };
 
                 socket.OnBinary += (msg) =>
@@ -42,7 +47,7 @@ namespace BolyukGame.GameHandling
                         return;
                     }
 
-                    if (!clients.Contains(socket))
+                    if (!clients.ContainsKey(socket))
                     {
                         if(parsed.Type != RequestType.Join)
                         {
@@ -58,7 +63,7 @@ namespace BolyukGame.GameHandling
                             return;
                         }
 
-                        clients.Add(socket);
+                        clients.Add(socket, data);
                         listener.OnPlayerReqistered(data);
                     } 
                     else
@@ -71,7 +76,10 @@ namespace BolyukGame.GameHandling
 
         public override void StopSession()
         {
-            clients.ForEach(c => c.Close());
+            foreach (var client in clients)
+            {
+                client.Key.Close();
+            }
             clients.Clear();
             server.Dispose();
             server = null;
@@ -81,12 +89,21 @@ namespace BolyukGame.GameHandling
         public void Broadcast(Answer request)
         {
             var parsed = ByteUtils.Serialize(request);
-            clients.ForEach(client => client.Send(parsed));
+            foreach (var client in clients)
+            {
+                client.Key.Send(parsed);
+            }
         }
 
         public override void SetListener(IGameListener listener)
         {
             this.listener = listener as IServerGameListener;
         }
+    }
+
+    public class ServerPlayerContainer
+    {
+        public PlayerContainer Player;
+        public IWebSocketConnection socket;
     }
 }

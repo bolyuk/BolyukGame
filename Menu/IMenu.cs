@@ -1,6 +1,8 @@
 ﻿using BolyukGame.Shared;
 using BolyukGame.UI;
 using BolyukGame.UI.Interface;
+using BolyukGame.UI.Label;
+using BolyukGame.UI.Policy;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Linq;
 
 namespace BolyukGame.Menu
 {
-    public abstract class IMenu
+    public class IMenu
     {
 
         UIContainer grid = new UIContainer();
@@ -68,6 +70,23 @@ namespace BolyukGame.Menu
         public void Focus(UIElement element)
         {
             grid.ChildFocus(element);
+        }
+
+        public void ShowSimpleToast(string text, Color? background_color = null, long ttl = 1000)
+        {
+            UIDispatcher.BeforeUpdate(() =>
+            {
+                var toast = new UISelfDesctructLabel()
+                {
+                    Text = text,
+                    TTL = ttl,
+                    PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Bottom },
+                    Background = background_color ?? Color.Red,
+                    Padding = new int[] {5,5,5,5},
+                };
+                GameState.Game.InfoLayer.RegUI(toast);
+                toast.ForceOnParentResized();
+            });
         }
     }
 }

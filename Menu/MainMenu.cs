@@ -40,7 +40,7 @@ namespace BolyukGame.Menu
             list.AddElement(new UILabel() { Text = "Settings" });
 
             list.Get<UILabel>(1).OnClick += (e) => GameState.Game.NavigateTo(new CreateLobbyMenu());
-
+            list.Get<UILabel>(2).OnClick += (e) => GameState.Game.NavigateTo(new SettingsMenu());
             var exit_but = new UILabel()
             {
                 Text = "Exit",

@@ -13,11 +13,11 @@ namespace BolyukGame.GameHandling
 
     public enum RequestType
     {
-        Leave = 0,
+        //Leave = 0,
         Join = 1,
-        Input = 2,
-        Config = 3,
+        //Input = 2,
+        //Config = 3,
         ServerSearch = 4,
-        PlayerInfo = 5,
+        //PlayerInfo = 5,
     }
 }

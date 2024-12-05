@@ -11,9 +11,11 @@ namespace BolyukGame.UI.Interface
     {
         private int width, height, widthMax, widtMin, heightMax, heightMin;
         private bool isFocused;
-        private Color background;
-        private Texture2D backgroundTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
+        private Color? background;
+        private Color? backgroundOnFocus = Color.Yellow;
 
+        private Texture2D backgroundTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
+        private Texture2D backgroundOnFocusTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
         public UIContainer Parent { get; set; }
 
         public bool IsSelectable { get; set; } = true;
@@ -37,11 +39,21 @@ namespace BolyukGame.UI.Interface
 
         public Color Background
         {
-            get => background;
+            get => background.Value;
             set
             {
                 background = value;
-                backgroundTexture.SetData(new[] { background });
+                backgroundTexture.SetData(new[] { background.Value });
+            }
+        }
+
+        public Color OnFocusBackground
+        {
+            get => backgroundOnFocus.Value;
+            set
+            {
+                backgroundOnFocus = value;
+                backgroundOnFocusTexture.SetData(new[] { backgroundOnFocus.Value });
             }
         }
 
@@ -156,14 +168,34 @@ namespace BolyukGame.UI.Interface
 
         public int[] Padding { get; set; } = new int[4];
 
-        public virtual void Update(GameTime gameTime) { }
+        public UIElement()
+        {
+            //workaround
+            OnFocusBackground = backgroundOnFocus.Value;
+        }
+
+        public virtual void Update(GameTime gameTime) 
+        {
+        
+        }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (AnimationPolicy != null)
                 AnimationPolicy.OnBeforeDraw(this, gameTime);
 
-            if (backgroundTexture != null)
+            DrawBackground(gameTime, spriteBatch);
+        }
+
+        protected virtual void DrawBackground(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            if(backgroundOnFocus != null && IsFocused)
+            {
+                spriteBatch.Draw(backgroundOnFocusTexture, new Rectangle(StartDrawX, StartDrawY, Width, Height), Color.White);
+                return;
+            }
+
+            if (background != null)
             {
                 spriteBatch.Draw(backgroundTexture, new Rectangle(StartDrawX, StartDrawY, Width, Height), Color.White);
             }

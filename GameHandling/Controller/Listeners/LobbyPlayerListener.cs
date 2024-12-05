@@ -28,11 +28,12 @@ namespace BolyukGame.GameHandling.Controller.Listeners
 
         public void OnError(ErrorEventArgs args)
         {
-            throw new NotImplementedException();
+            Menu.ShowSimpleToast(args.Message);
         }
 
         public void OnSessionEnds()
         {
+            Menu.ShowSimpleToast("Session ended!");
             GameState.Game.NavigateTo(new MainMenu());
         }
 

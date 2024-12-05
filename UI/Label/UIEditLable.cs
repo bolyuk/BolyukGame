@@ -18,19 +18,24 @@ namespace BolyukGame.UI.Label
             get => question;
             set
             {
-                Text = value;
                 question = value;
+                SetText(false);
+            }
+        }
+
+        public string Answer
+        {
+            get => answer;
+            set
+            {
+                answer = value;
+                SetText(false);
             }
         }
 
         public string EditSymbol { get; set; } = "_";
 
-        public long EditSymbolCoolDown { get; set; } = 300;
-
-        public virtual string getAnswer()
-        {
-            return answer;
-        }
+        public long EditSymbolCoolDown { get; set; } = 300;      
 
         public override bool onKeyEvent(KeyEvent args)
         {
@@ -67,14 +72,14 @@ namespace BolyukGame.UI.Label
 
         protected void SetText(bool showEditSymbol)
         {
-            Text = $"{Question} {answer}" + (showEditSymbol ? EditSymbol : "");
+            Text = $"{Question} {Answer}" + (showEditSymbol ? EditSymbol : "");
         }
 
         protected void DecodeInput(KeyEvent args)
         {
-            if (args.IsOnlyUp(Keys.Back) && answer.Length > 0)
+            if (args.IsOnlyUp(Keys.Back) && Answer.Length > 0)
             {
-                answer = answer.Substring(0, answer.Length - 1);
+                Answer = Answer.Substring(0, Answer.Length - 1);
                 return;
             }
 
@@ -85,7 +90,7 @@ namespace BolyukGame.UI.Label
                     if (IsValidCharacter(key, args))
                     {
                         char character = ConvertKeyToChar(key, args);
-                        answer += character;
+                        Answer += character;
                     }
                 }
             }

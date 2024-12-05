@@ -128,7 +128,6 @@ namespace BolyukGame.UI.Label
         {
             base.Update(gameTime);
             elapseTimeKeyshandled += gameTime.ElapsedGameTime.TotalMilliseconds;
-            Background = IsFocused ? Color.Yellow : Color.Transparent;
         }
 
         public override void CalculateSize()

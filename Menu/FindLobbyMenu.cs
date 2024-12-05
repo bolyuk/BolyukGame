@@ -7,6 +7,7 @@ using BolyukGame.UI;
 using BolyukGame.UI.Interface;
 using BolyukGame.UI.Label;
 using BolyukGame.UI.Policy;
+using SharpDX.MediaFoundation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,14 @@ namespace BolyukGame.Menu
                 PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Center }
             };
 
-            list.AddElement(new UILoadingLabel() { ShownText = "Searching", IsSelectable = false, IsLoadingShown = true });
+            list.AddElement(new UILoadingLabel() 
+            { 
+                ShownText = "Searching", 
+                Padding = new int[] {0,0,10,0},
+                IsSelectable = false, 
+                IsLoadingShown = true,
+                
+            });
 
             var back_but = new UILabel()
             {
@@ -85,10 +93,7 @@ namespace BolyukGame.Menu
             var l = lobbies.Where(e => e.Id == element.id).FirstOrDefault();
             if (l == null)
                 return;
-            GameState.CurrentLobby = new LobbyInfoExtended() { Id = l.Id};
-
-            //have to be edited
-            //l.Ip = "localhost";
+            GameState.CurrentLobby = new LobbyInfoExtended() { Id = l.Id, Name = l.Name};
 
             var client = new ClientController();
             try

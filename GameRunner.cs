@@ -16,6 +16,7 @@ namespace BolyukGame
         public int WindowHeight { get; internal set; }
 
         private IMenu currentMenu;
+        public IMenu InfoLayer { get; internal set; }
 
         public GameRunner()
         {
@@ -32,6 +33,7 @@ namespace BolyukGame
             GameState.Game = this;
             GameState.Font = Content.Load<SpriteFont>("font");
             currentMenu = new MainMenu();
+            InfoLayer = new IMenu();
 
             Window.AllowUserResizing = true;
             base.Initialize();
@@ -52,6 +54,7 @@ namespace BolyukGame
             
 
             currentMenu.InternalUpdate(gameTime);
+            InfoLayer.InternalUpdate(gameTime);
 
             if (GraphicsDevice.Viewport.Width != WindowWidth || GraphicsDevice.Viewport.Height != WindowHeight)
             {              
@@ -60,6 +63,7 @@ namespace BolyukGame
                 WindowHeight = GraphicsDevice.Viewport.Height;
 
                 currentMenu.OnResize(WindowWidth, WindowHeight);
+                InfoLayer.OnResize(WindowWidth, WindowHeight);
             }
             // TODO: Add your update logic here
 
@@ -73,6 +77,7 @@ namespace BolyukGame
                 samplerState: SamplerState.PointClamp
                 );
             currentMenu.InternalDraw(gameTime, _spriteBatch);
+            InfoLayer.InternalDraw(gameTime, _spriteBatch );
             _spriteBatch.End();
             base.Draw(gameTime);
         }

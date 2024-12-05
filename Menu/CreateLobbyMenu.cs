@@ -55,9 +55,23 @@ namespace BolyukGame.Menu
 
             create_but.OnClick += (e) =>
             {
+                var answer = question.Answer;
+                if (answer == null || answer.Length < 3)
+                {
+                    ShowSimpleToast("Lobby Name is too short!");
+                    return;
+                }
+
+                if (answer.Length > 10)
+                {
+                    ShowSimpleToast("Lobby Name is too long!");
+                    return;
+                }
+
+
                 var lobby = new LobbyInfoExtended() { 
                     PlayersCount = 1, 
-                    Name = question.getAnswer()
+                    Name = answer
                 };
 
                 ShareLobby.ExecAsync(lobby);

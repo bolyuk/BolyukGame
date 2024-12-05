@@ -85,7 +85,12 @@ namespace BolyukGame.Menu
                 var list = GameState.CurrentLobby.PlayersList;
 
                 player_list.Clear();
-                player_list.AddElement(new UILabel() { Text = $"Players: {list.Count}", IsSelectable = false });
+                player_list.AddElement(new UILabel() 
+                { 
+                    Text = $"Players: {list.Count}",
+                    Padding = new int[] { 0, 0, 10, 0 },
+                    IsSelectable = false 
+                });
 
                 list.ForEach(p =>
                 {
