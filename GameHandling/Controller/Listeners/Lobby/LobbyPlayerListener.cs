@@ -2,27 +2,43 @@
 using BolyukGame.Menu;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WebSocketSharp;
 
-namespace BolyukGame.GameHandling.Controller.Listeners
+namespace BolyukGame.GameHandling.Controller.Listeners.Lobby
 {
     public class LobbyPlayerListener : IPlayerGameListener
     {
         public LobbyMenu Menu { get; set; }
 
-        public virtual void acceptQuery(Answer update)
+        public virtual void AcceptQuery(Answer update)
         {
             var controller = GameState.CurrentLobby;
 
             if (update.Type == AnswerType.PlayerInfo)
             {
-               controller.PlayersList = ByteUtils.Deserialize<List<PlayerContainer>>(update.Body);
-               Menu.NotifyUpdatePlayerList();
+                controller.PlayersList = ByteUtils.Deserialize<List<PlayerContainer>>(update.Body);
+                Menu.NotifyUpdatePlayerList();
+            }
+            if (update.Type == AnswerType.ColorPick)
+            {
+                var data = ByteUtils.Deserialize<ColorContainer>(update.Body);
+
+                if (data == null)
+                    return;
+
+                var p = controller.PlayersList.Where(p => p.Id == data.PlayerId).FirstOrDefault();
+                if (p == null)
+                    return;
+                
+
+                p.Color = data.Color;
+                Menu.NotifyUpdatePlayerList();
+            }
+            if (update.Type == AnswerType.GameStart)
+            {
+                GameState.Game.NavigateTo(new GameMenu());
             }
         }
 

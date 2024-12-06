@@ -50,7 +50,7 @@ namespace BolyukGame.UI.Label
 
         public Color? TextSelectedColor { get; set; } = null;
 
-        public Color ShadowColor {  get; set; } = Color.Gray;
+        public virtual Color ShadowColor {  get; set; } = Color.Gray;
 
         public event Action<UIElement> OnClick;
 

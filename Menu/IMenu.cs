@@ -34,13 +34,19 @@ namespace BolyukGame.Menu
 
             if (isKeyHandlingNeeded && !lastKeyUpdate.Equals(keyEvent))
             {
-                grid.onKeyEvent(keyEvent);
+               if(!CatchKeyEvent(keyEvent))
+                    grid.onKeyEvent(keyEvent);
                 lastKeyUpdate = keyEvent;
             }
                 
             grid.Update(gameTime);
 
             Update(gameTime);
+        }
+
+        public virtual bool CatchKeyEvent(KeyEvent args)
+        {
+            return false;
         }
 
         public void InternalDraw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -65,6 +71,11 @@ namespace BolyukGame.Menu
         public void RegUI(UIElement element)
         {
             grid.AddElement(element);
+        }
+
+        public void UnRegUI(UIElement element)
+        {
+            grid.RemoveElement(element);
         }
 
         public void Focus(UIElement element)

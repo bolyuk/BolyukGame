@@ -1,12 +1,15 @@
 ﻿using BolyukGame.Communication.UPD;
 using BolyukGame.GameHandling;
 using BolyukGame.GameHandling.Container;
-using BolyukGame.GameHandling.Controller.Listeners;
+using BolyukGame.GameHandling.Controller.Listeners.Lobby;
 using BolyukGame.Shared;
+using BolyukGame.Shared.Info;
 using BolyukGame.UI;
 using BolyukGame.UI.Label;
 using BolyukGame.UI.Policy;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BolyukGame.Menu
 {
@@ -14,8 +17,16 @@ namespace BolyukGame.Menu
     {
         private UIList player_list = new UIList()
         {
-            PositionPolicy = new StickyPolicy() { Horizontal= Sticky.Center, Vertical= Sticky.Center },
+            PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Center },
         };
+
+        private UIColorPickerLabel color_label = new UIColorPickerLabel()
+        {
+            Text = "Color: ",
+            Colors = new List<Color>() { Color.Red, Color.Blue, Color.Black, Color.White, Color.Yellow, Color.Green },
+            Padding = new int[] { 10, 10, 0, 0 },
+        };
+
         public LobbyMenu()
         {
             bool isAdmin = GameState.Controller is ServerController;
@@ -25,6 +36,34 @@ namespace BolyukGame.Menu
                 Text = isAdmin ? "<- Close  Lobby" : " <- Leave Lobby",
                 Padding = new int[] { 10, 10, 0, 0 },
                 TextSelectedColor = Color.DarkRed,
+            };
+
+            color_label.StartY = back_button.Height + 10;
+
+            color_label.OnEditModeLeaved += () =>
+            {
+                var p = GameState.CurrentLobby.PlayersList.Where(
+                    p => p.Color == color_label.Selected &&
+                    p.Id != GameState.Config.UserId
+                    ).FirstOrDefault();
+
+                if (p != null)
+                {
+                    ShowSimpleToast("This Color is Busy!");
+                    color_label.ForceEditMode();
+                    return;
+                }
+
+                GameState.Controller.SendQuery(new Request()
+                {
+                    LobbyId = GameState.CurrentLobby.Id,
+                    Type = RequestType.ColorSelect,
+                    Body = ByteUtils.Serialize(new ColorContainer()
+                    {
+                        Color = color_label.Selected,
+                        PlayerId = GameState.Config.UserId,
+                    }),
+                });
             };
 
             back_button.OnClick += (e) =>
@@ -44,6 +83,7 @@ namespace BolyukGame.Menu
             };
 
             RegUI(info);
+            RegUI(color_label);
 
             if (isAdmin)
             {
@@ -62,7 +102,27 @@ namespace BolyukGame.Menu
                 {
                     Text = "Start ->",
                     Padding = new int[] { 0, 0, 10, 10 },
-                    PositionPolicy = new StickyPolicy() { Horizontal= Sticky.Right, Vertical = Sticky.Bottom },
+                    PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Right, Vertical = Sticky.Bottom },
+                };
+
+                start_but.OnClick += (e) =>
+                {
+                    var p = GameState.CurrentLobby.PlayersList.Where(p => p.Color == null).FirstOrDefault();
+
+                    if(p != null)
+                    {
+                        ShowSimpleToast("All users have to select a Color!");
+                        return;
+                    }
+
+                    ShareLobby.Stop();
+                    var server = GameState.Controller as ServerController;
+                    server.Broadcast(new Answer()
+                    {
+                        LobbyId = GameState.CurrentLobby.Id,
+                        Type = AnswerType.GameStart,
+                    });
+                    GameState.Game.NavigateTo(new GameMenu());
                 };
 
                 RegUI(start_but);
@@ -85,20 +145,19 @@ namespace BolyukGame.Menu
                 var list = GameState.CurrentLobby.PlayersList;
 
                 player_list.Clear();
-                player_list.AddElement(new UILabel() 
-                { 
+                player_list.AddElement(new UILabel()
+                {
                     Text = $"Players: {list.Count}",
                     Padding = new int[] { 0, 0, 10, 0 },
-                    IsSelectable = false 
+                    IsSelectable = false,
                 });
 
                 list.ForEach(p =>
                 {
-                    var label = new UILabel() { Text = p.Name, id = p.Id };
+                    var label = new UILabel() { Text = p.Name, id = p.Id, TextColor = p.Color.GetValueOrDefault() };
                     if (p.Id == GameState.Config.UserId)
                     {
                         label.Text += "  (ME)";
-                        label.TextColor = Color.Green;
                     }
                     player_list.AddElement(label);
 

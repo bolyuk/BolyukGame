@@ -36,7 +36,7 @@ namespace BolyukGame.GameHandling
                     var parsed = ByteUtils.Deserialize<Answer>(s.RawData);
                     if (parsed == null)
                         return;
-                    listener.acceptQuery(parsed);
+                    listener.AcceptQuery(parsed);
                 }
             };
 

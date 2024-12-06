@@ -21,7 +21,7 @@ namespace BolyukGame.GameHandling
 
     public interface IGameListener
     {
-        public void acceptQuery(Answer update);
+        public void AcceptQuery(Answer update);
     }
 
     public interface IPlayerGameListener : IGameListener

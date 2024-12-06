@@ -16,7 +16,7 @@ namespace BolyukGame.GameHandling
 
         public override void SendQuery(Request update)
         {
-            listener.acceptQuery(listener.QueryWork(update));
+            listener.AcceptQuery(listener.QueryWork(update));
         }
 
         public override void StartSession(string ip)

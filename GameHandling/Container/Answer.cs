@@ -12,10 +12,12 @@ namespace BolyukGame.GameHandling.Container
 
     public enum AnswerType
     {
-        GameStart=0,
-        ServerFound=1,
-        //LobbyConfig=2,
-        //Kicked=3,
-        PlayerInfo = 4,
+        ServerFound = 0,
+        //lobby 
+        PlayerInfo = 1,
+        ColorPick = 2,
+        //Game
+        GameStart = 3,
+        EntityPosContainer = 4,
     }
 }
