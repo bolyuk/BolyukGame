@@ -14,7 +14,7 @@ namespace BolyukGame.Menu
                 Text = "[Settings]",
                 IsSelectable = false,
                 Padding = new int[4] { 0, 10, 10, 0 },
-                PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Right },
+                PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Right },
             };
 
             RegUI(info);
@@ -46,7 +46,7 @@ namespace BolyukGame.Menu
             {
                 Text = "Save",
                 Padding = new int[4] { 0, 0, 10, 10 },
-                PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Right, Vertical = Sticky.Bottom },
+                PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Right, Vertical = StickyPosition.Bottom },
             };
 
             RegUI(create_but);

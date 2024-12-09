@@ -9,5 +9,7 @@ namespace BolyukGame.Shared.Info
     public class LobbyInfoExtended : LobbyInfoSmall
     {
         public List<PlayerContainer> PlayersList { get; set; } = new List<PlayerContainer>();
+
+        public GameMap Map { get; set; }
     }
 }

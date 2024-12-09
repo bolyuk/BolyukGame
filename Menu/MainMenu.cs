@@ -13,7 +13,7 @@ namespace BolyukGame.Menu
         {
             UIList list = new UIList()
             {
-                PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Center }
+                PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Center, Vertical = StickyPosition.Center }
             };
 
             var splash = new UILabel()
@@ -23,9 +23,9 @@ namespace BolyukGame.Menu
                 TextScale = 2f,
                 TextColor = Color.DarkRed,
                 Padding = new int[4] { 0, 60, 0, 0 },
-                PositionPolicy = new StickyPolicy()
+                PositionPolicy = new StickyPositionPolicy()
                 {
-                    Horizontal = Sticky.Center
+                    Horizontal = StickyPosition.Center
                 },
                 AnimationPolicy = new OscillatingTransformAnimation()
             };
@@ -46,7 +46,7 @@ namespace BolyukGame.Menu
                 Text = "Exit",
                 TextSelectedColor = Color.DarkRed,
                 Padding = new int[4] { 0, 0, 0, 10 },
-                PositionPolicy = new StickyPolicy() {Vertical=Sticky.Bottom, Horizontal=Sticky.Center }
+                PositionPolicy = new StickyPositionPolicy() {Vertical=StickyPosition.Bottom, Horizontal=StickyPosition.Center }
             };
             exit_but.OnClick += (e) => GameState.Game.Exit();
 

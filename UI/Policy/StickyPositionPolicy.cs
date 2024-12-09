@@ -8,10 +8,10 @@ using System.Xml.Linq;
 
 namespace BolyukGame.UI.Policy
 {
-    public class StickyPolicy : IPositionPolicy
+    public class StickyPositionPolicy : IPositionPolicy
     {
-        public Sticky Horizontal { get; set; }
-        public Sticky Vertical { get; set; }
+        public StickyPosition Horizontal { get; set; }
+        public StickyPosition Vertical { get; set; }
 
         public void Execute(int width, int height, UIElement element, UIContainer parent)
         {
@@ -30,11 +30,11 @@ namespace BolyukGame.UI.Policy
         {
             switch (Horizontal)
             {
-                case Sticky.Center:
+                case StickyPosition.Center:
                     return parent.StartX + (width - element.LogicalWidth) / 2;
-                case Sticky.Left:
+                case StickyPosition.Left:
                     return parent.StartX;
-                case Sticky.Right:
+                case StickyPosition.Right:
                     return parent.StartX + width - element.LogicalWidth;
                 default:
                     return element.StartX;
@@ -45,18 +45,18 @@ namespace BolyukGame.UI.Policy
         {
             switch (Vertical)
             {
-                case Sticky.Center:
+                case StickyPosition.Center:
                     return parent.StartY + (height - element.LogicalHeight) / 2;
-                case Sticky.Top:
+                case StickyPosition.Top:
                     return parent.StartY;
-                case Sticky.Bottom:
+                case StickyPosition.Bottom:
                     return parent.StartY + height - element.LogicalHeight;
                 default:
                     return element.StartY;
             }
         }
     }
-    public enum Sticky
+    public enum StickyPosition
     {
         None,
         Center,

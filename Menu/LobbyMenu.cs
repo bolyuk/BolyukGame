@@ -4,6 +4,7 @@ using BolyukGame.GameHandling.Container;
 using BolyukGame.GameHandling.Controller.Listeners.Lobby;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
+using BolyukGame.Shared.Info.Maps;
 using BolyukGame.UI;
 using BolyukGame.UI.Label;
 using BolyukGame.UI.Policy;
@@ -17,7 +18,7 @@ namespace BolyukGame.Menu
     {
         private UIList player_list = new UIList()
         {
-            PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Center },
+            PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Center, Vertical = StickyPosition.Center },
         };
 
         private UIColorPickerLabel color_label = new UIColorPickerLabel()
@@ -79,7 +80,7 @@ namespace BolyukGame.Menu
                 Text = $"[{GameState.CurrentLobby.Name}]",
                 IsSelectable = false,
                 Padding = new int[4] { 0, 10, 10, 0 },
-                PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Right },
+                PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Right },
             };
 
             RegUI(info);
@@ -102,7 +103,7 @@ namespace BolyukGame.Menu
                 {
                     Text = "Start ->",
                     Padding = new int[] { 0, 0, 10, 10 },
-                    PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Right, Vertical = Sticky.Bottom },
+                    PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Right, Vertical = StickyPosition.Bottom },
                 };
 
                 start_but.OnClick += (e) =>
@@ -117,10 +118,15 @@ namespace BolyukGame.Menu
 
                     ShareLobby.Stop();
                     var server = GameState.Controller as ServerController;
+
+                    //for test use only
+                    GameState.CurrentLobby.Map = new DefaultGameMap();
+
                     server.Broadcast(new Answer()
                     {
                         LobbyId = GameState.CurrentLobby.Id,
                         Type = AnswerType.GameStart,
+                        Body = ByteUtils.Serialize(GameState.CurrentLobby.Map)
                     });
                     GameState.Game.NavigateTo(new GameMenu());
                 };

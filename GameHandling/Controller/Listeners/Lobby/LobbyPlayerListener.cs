@@ -38,6 +38,17 @@ namespace BolyukGame.GameHandling.Controller.Listeners.Lobby
             }
             if (update.Type == AnswerType.GameStart)
             {
+                var map = ByteUtils.Deserialize<GameMap>(update.Body);
+
+                if(map == null)
+                {
+                    Menu.ShowSimpleToast("Error Loading Map!");
+                    GameState.Game.NavigateTo(new MainMenu());
+                    return;
+                }
+
+                GameState.CurrentLobby.Map = map;
+
                 GameState.Game.NavigateTo(new GameMenu());
             }
         }

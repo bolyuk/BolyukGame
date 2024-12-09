@@ -24,14 +24,14 @@ namespace BolyukGame.Menu
                 Text = "[Lobby  Searching]",
                 IsSelectable = false,
                 Padding = new int[4] { 0, 10, 10, 0 },
-                PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Right },
+                PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Right },
             };
 
             RegUI(info);
 
             UIList list = new UIList()
             {
-                PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Center }
+                PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Center, Vertical = StickyPosition.Center }
             };
 
             list.AddElement(new UILoadingLabel() 

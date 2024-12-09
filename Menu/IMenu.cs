@@ -91,7 +91,7 @@ namespace BolyukGame.Menu
                 {
                     Text = text,
                     TTL = ttl,
-                    PositionPolicy = new StickyPolicy() { Horizontal = Sticky.Center, Vertical = Sticky.Bottom },
+                    PositionPolicy = new StickyPositionPolicy() { Horizontal = StickyPosition.Center, Vertical = StickyPosition.Bottom },
                     Background = background_color ?? Color.Red,
                     Padding = new int[] {5,5,5,5},
                 };
