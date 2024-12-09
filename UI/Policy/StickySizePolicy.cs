@@ -15,7 +15,21 @@ namespace BolyukGame.UI.Policy
 
         public void Execute(int width, int height, UIElement element, UIContainer parent)
         {
-            throw new NotImplementedException();
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
+
+
+            int StartX = parent.StartX;
+            int StartY = parent.StartY;
+
+            int Height = parent.Height;
+            int Width = parent.Width;
+
+            if (Top == StickySize.Occupy)
+                element.StartX = StartX;
+            if(Bottom == StickySize.Occupy)
+                element.Width = Width - element.StartX;
+ 
         }
     }
 

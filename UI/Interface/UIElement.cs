@@ -11,11 +11,14 @@ namespace BolyukGame.UI.Interface
     {
         private int width, height, widthMax, widtMin, heightMax, heightMin;
         private bool isFocused;
+        protected bool isFocusFaded;
         private Color? background;
         private Color? backgroundOnFocus = Color.Yellow;
+        private Color? backgroundOnFocusFaded = Color.DarkGray;
 
         private Texture2D backgroundTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
         private Texture2D backgroundOnFocusTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
+        private Texture2D backgroundOnFocusFadedTexture = new Texture2D(GameState.GraphicsDevice, 1, 1);
         public UIContainer Parent { get; set; }
 
         public bool IsSelectable { get; set; } = true;
@@ -26,8 +29,26 @@ namespace BolyukGame.UI.Interface
             internal set
             {
                 isFocused = value;
+
                 if (value)
                     OnFocusGot();
+                else
+                    OnFocusLost();
+            }
+        }
+
+
+        public virtual bool IsFocusFaded
+        {
+            get => isFocusFaded;
+            internal set
+            {
+                isFocusFaded = value;
+
+                if (value)
+                    OnFocusFadingGot();
+                else
+                    OnFocusFadingLost();
             }
         }
 
@@ -54,6 +75,16 @@ namespace BolyukGame.UI.Interface
             {
                 backgroundOnFocus = value;
                 backgroundOnFocusTexture.SetData(new[] { backgroundOnFocus.Value });
+            }
+        }
+
+        public Color OnFocusFadedBackground
+        {
+            get => backgroundOnFocusFaded.Value;
+            set
+            {
+                backgroundOnFocusFaded = value;
+                backgroundOnFocusFadedTexture.SetData(new[] { backgroundOnFocusFaded.Value });
             }
         }
 
@@ -172,6 +203,7 @@ namespace BolyukGame.UI.Interface
         {
             //workaround
             OnFocusBackground = backgroundOnFocus.Value;
+            OnFocusFadedBackground = backgroundOnFocusFaded.Value;
         }
 
         public virtual void Update(GameTime gameTime) 
@@ -191,6 +223,12 @@ namespace BolyukGame.UI.Interface
         {
             if(backgroundOnFocus != null && IsFocused)
             {
+                if (IsFocusFaded)
+                {
+                    spriteBatch.Draw(backgroundOnFocusFadedTexture, new Rectangle(StartDrawX, StartDrawY, Width, Height), Color.White);
+                    return;
+                }
+
                 spriteBatch.Draw(backgroundOnFocusTexture, new Rectangle(StartDrawX, StartDrawY, Width, Height), Color.White);
                 return;
             }
@@ -224,6 +262,16 @@ namespace BolyukGame.UI.Interface
         }
 
         protected virtual void OnFocusLost()
+        {
+
+        }
+
+        protected virtual void OnFocusFadingGot()
+        {
+
+        }
+
+        protected virtual void OnFocusFadingLost()
         {
 
         }

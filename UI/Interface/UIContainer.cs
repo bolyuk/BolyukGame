@@ -10,26 +10,12 @@ namespace BolyukGame.UI.Interface
 {
     public class UIContainer : UIElement, UIKeyHandle
     {
-        private bool isFocused = false;
 
         protected List<UIElement> elements = new List<UIElement>();
 
         protected List<UIElement> removeRequests = new List<UIElement>();
 
         public virtual UIElement FocusedElement { get; internal set; }
-        public override bool IsFocused
-        {
-            get => isFocused;
-            internal set
-            {
-                isFocused = value;
-
-                if (value)
-                    OnFocusGot();
-                else
-                    OnFocusLost();
-            }
-        }
 
         public virtual void ChildFocus(UIElement element)
         {
@@ -233,6 +219,18 @@ namespace BolyukGame.UI.Interface
         protected override void OnFocusGot()
         {
             TryMove(new KeyEvent() { UpKeys = new List<Keys>() { Keys.Down } });
+        }
+
+        protected override void OnFocusFadingGot()
+        {
+            if(FocusedElement != null)
+                FocusedElement.IsFocusFaded = true;
+        }
+
+        protected override void OnFocusFadingLost()
+        {
+            if (FocusedElement != null)
+                FocusedElement.IsFocusFaded = false;
         }
     }
 }

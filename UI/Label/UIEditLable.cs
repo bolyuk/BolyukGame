@@ -33,6 +33,20 @@ namespace BolyukGame.UI.Label
             }
         }
 
+        public override bool IsFocusFaded
+        {
+            get => base.isFocusFaded || !isEditMode;
+            internal set
+            {
+                base.isFocusFaded = value;
+
+                if (value)
+                    OnFocusFadingGot();
+                else
+                    OnFocusFadingLost();
+            }
+        }
+
         public string EditSymbol { get; set; } = "_";
 
         public long EditSymbolCoolDown { get; set; } = 300;      

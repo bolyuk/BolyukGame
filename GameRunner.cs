@@ -11,7 +11,7 @@ namespace BolyukGame
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
+        private bool wasActive = true;
         public int WindowWidth { get; internal set; }
         public int WindowHeight { get; internal set; }
 
@@ -34,7 +34,6 @@ namespace BolyukGame
             GameState.Font = Content.Load<SpriteFont>("font");
             currentMenu = new MainMenu();
             InfoLayer = new IMenu();
-
             Window.AllowUserResizing = true;
             base.Initialize();
         }
@@ -64,6 +63,12 @@ namespace BolyukGame
 
                 currentMenu.OnResize(WindowWidth, WindowHeight);
                 InfoLayer.OnResize(WindowWidth, WindowHeight);
+            }
+
+            if (IsActive != wasActive)
+            {
+                wasActive=IsActive;
+                currentMenu.FocusFadingChanged(!IsActive);
             }
             // TODO: Add your update logic here
 

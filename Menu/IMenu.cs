@@ -56,6 +56,11 @@ namespace BolyukGame.Menu
             Draw(gameTime, spriteBatch);
         }
 
+        public virtual void FocusFadingChanged(bool isFaded)
+        {
+            grid.IsFocusFaded = isFaded;
+        }
+
         public virtual void BeforeUpdate(GameTime gameTime) { }
 
         public virtual void Update(GameTime gameTime) { }

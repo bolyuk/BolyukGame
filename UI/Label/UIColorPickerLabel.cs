@@ -29,6 +29,20 @@ namespace BolyukGame.UI.Label
             }
         }
 
+        public override bool IsFocusFaded
+        {
+            get => base.isFocusFaded || !isEditMode;
+            internal set
+            {
+                base.isFocusFaded = value;
+
+                if (value)
+                    OnFocusFadingGot();
+                else
+                    OnFocusFadingLost();
+            }
+        }
+
         public event Action OnEditModeLeaved;
         public List<Color> Colors { get; set; } = new List<Color>();
 
