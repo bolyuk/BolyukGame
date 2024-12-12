@@ -49,7 +49,7 @@ namespace BolyukGame.UI.Interface
                 !args.IsOnlyUp(Keys.Left) && !args.IsOnlyUp(Keys.Right))
                 return false;
 
-            var nextElement = GetNextElement(from, args);
+            var nextElement = GetNextElement(from, args, false);
 
             if (nextElement != null)
             {
@@ -72,7 +72,7 @@ namespace BolyukGame.UI.Interface
                 !args.IsOnlyUp(Keys.Left) && !args.IsOnlyUp(Keys.Right))
                 return false;
 
-            var nextElement = GetNextElement(FocusedElement, args);
+            var nextElement = GetNextElement(FocusedElement, args, false);
 
             if (nextElement != null)
             {
@@ -88,23 +88,18 @@ namespace BolyukGame.UI.Interface
             return false;
         }
 
-        private UIElement GetNextElement(UIElement current, KeyEvent args)
+        public virtual UIElement GetNextElement(UIElement current, KeyEvent args, bool IgnoreUnselectable)
         {
-
-            // Получаем координаты текущего элемента
             var currentX = current?.StartX ?? 0;
             var currentY = current?.StartY ?? 0;
 
-            // Фильтруем элементы, чтобы выбрать только подходящие по направлению
             var candidates = elements
-                .Where(e => e != current && e.IsSelectable) // Исключаем текущий элемент
-                .Where(e => IsInDirection(currentX, currentY, e, args)) // Проверяем направление
+                .Where(e => e != current && (e.IsSelectable || IgnoreUnselectable))
+                .Where(e => IsInDirection(currentX, currentY, e, args))
                 .ToList();
 
-            // Если кандидатов нет, возвращаем null
             if (!candidates.Any()) return null;
 
-            // Ищем ближайший элемент по евклидову расстоянию
             return candidates
                 .OrderBy(e => GetDistance(currentX, currentY, e.StartX, e.StartY))
                 .FirstOrDefault();
@@ -113,13 +108,13 @@ namespace BolyukGame.UI.Interface
         private bool IsInDirection(int currentX, int currentY, UIElement candidate, KeyEvent args)
         {
             if (args.IsOnlyUp(Keys.Up))
-                return candidate.StartY < currentY; // Вверх
+                return candidate.StartY < currentY;
             if (args.IsOnlyUp(Keys.Down))
-                return candidate.StartY > currentY; // Вниз
+                return candidate.StartY > currentY;
             if (args.IsOnlyUp(Keys.Left))
-                return candidate.StartX < currentX; // Влево
+                return candidate.StartX < currentX;
             if (args.IsOnlyUp(Keys.Right))
-                return candidate.StartX > currentX; // Вправо
+                return candidate.StartX > currentX;
             return false;
         }
 
@@ -132,13 +127,6 @@ namespace BolyukGame.UI.Interface
         {
             if (TryResolveByFocused(args)) return true;
             if (TryMove(args)) return true;
-
-            //foreach (UIKeyHandle item in elements.Where(e => e is UIKeyHandle))
-            //{
-            //    bool r = item.onKeyEvent(args);
-            //    if (r)
-            //        return true;
-            //}
             return false;
         }
 

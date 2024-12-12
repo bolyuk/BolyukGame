@@ -34,15 +34,16 @@ namespace BolyukGame.Menu
 
             RegUI(back_but);
 
-            var list = new UIList()
+            var lobby_config = new UIList()
             {
-                StartY = back_but.LogicalHeight + 40,
-                Padding = new int[] { 10, 0, 0, 0 },
+                SizePolicy = new StickySizePolicy() { Top=StickySize.OccupySoft },
+                StartY=100,
+                Padding = new int[] { 10, 10, 0, 0 },
             };
 
             var question = new UIEditLable() { Question = "Lobby  Name:" };
 
-            list.AddElement(question);
+            lobby_config.AddElement(question);
 
             var create_but = new UILabel()
             {
@@ -85,7 +86,7 @@ namespace BolyukGame.Menu
             };
 
 
-            RegUI(list);
+            RegUI(lobby_config);
             Focus(back_but);
         }
     }

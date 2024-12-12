@@ -19,7 +19,8 @@ namespace BolyukGame.GameHandling.Container
         ColorPick = 2,
 
         //Game
-        GameStart = 3,
-        EntityPosContainer = 4,
+        MapSend = 3,
+        GameStart = 4,
+        PlayerPosContainer = 5,
     }
 }

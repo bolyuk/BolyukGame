@@ -11,5 +11,7 @@ namespace BolyukGame.Shared.Info
         public Color? Color { get; set; }
 
         public bool IsAdmin { get; set; }
+
+        public Vector2 Position { get; set; }
     }
 }

@@ -54,6 +54,8 @@ namespace BolyukGame.UI.Interface
 
         public IPositionPolicy PositionPolicy { get; set; }
 
+        public ISizePolicy SizePolicy { get; set; }
+
         public IAnimationPolicy AnimationPolicy { get; set; }
 
         public Guid id { get; set; } = Guid.NewGuid();
@@ -241,6 +243,9 @@ namespace BolyukGame.UI.Interface
 
         public virtual void OnParentResized(int window_width, int window_height)
         {
+            if(SizePolicy != null)
+                SizePolicy.Execute(window_width, window_height, this, Parent);
+
             if (PositionPolicy != null)
                 PositionPolicy.Execute(window_width, window_height, this, Parent);
             CalculateSize();

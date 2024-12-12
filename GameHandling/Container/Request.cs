@@ -21,5 +21,7 @@ namespace BolyukGame.GameHandling
 
         //Game
         Ready = 3,
+        MapGet = 4,
+        PosChanged = 5,
     }
 }

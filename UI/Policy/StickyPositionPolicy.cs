@@ -1,10 +1,5 @@
 ﻿using BolyukGame.UI.Interface;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace BolyukGame.UI.Policy
 {
@@ -21,7 +16,6 @@ namespace BolyukGame.UI.Policy
             element.StartX = CalculateHorizontal(width, element, parent);
             element.StartY = CalculateVertical(height, element, parent);
 
-            // Убедимся, что элемент не выходит за границы
             element.StartX = Math.Max(parent.StartX, Math.Min(parent.StartX + width - element.LogicalWidth, element.StartX));
             element.StartY = Math.Max(parent.StartY, Math.Min(parent.StartY + height - element.LogicalHeight, element.StartY));
         }
@@ -64,9 +58,5 @@ namespace BolyukGame.UI.Policy
         Bottom,
         Left,
         Right,
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight 
     }
 }

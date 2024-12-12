@@ -18,6 +18,10 @@ namespace BolyukGame
         private IMenu currentMenu;
         public IMenu InfoLayer { get; internal set; }
 
+        public static Texture2D Wall { get; set; }
+
+        public static Texture2D Player { get; set; } 
+
         public GameRunner()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -28,10 +32,11 @@ namespace BolyukGame
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             GameState.GraphicsDevice = GraphicsDevice;
             GameState.Game = this;
             GameState.Font = Content.Load<SpriteFont>("font");
+            Wall = Content.Load<Texture2D>("drawable/brickwall_16px");
+            Player = Content.Load<Texture2D>("drawable/arrowbutton_16px");
             currentMenu = new MainMenu();
             InfoLayer = new IMenu();
             Window.AllowUserResizing = true;
@@ -42,15 +47,10 @@ namespace BolyukGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
-            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            //    Exit();
-
-            
 
             currentMenu.InternalUpdate(gameTime);
             InfoLayer.InternalUpdate(gameTime);
@@ -70,7 +70,6 @@ namespace BolyukGame
                 wasActive=IsActive;
                 currentMenu.FocusFadingChanged(!IsActive);
             }
-            // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
@@ -91,7 +90,6 @@ namespace BolyukGame
         {
             this.currentMenu = menu;
             currentMenu.OnResize(WindowWidth, WindowHeight);
-            //Thread.Sleep(100);
         }
     }
 }

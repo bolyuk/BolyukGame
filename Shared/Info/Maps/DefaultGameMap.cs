@@ -2,23 +2,26 @@
 {
     public class DefaultGameMap : GameMap
     {
+
         public DefaultGameMap()
         {
             Name = "Default";
-            MapData = new int[32*16];
+
+            Height = 16;
+            Width = 32;
+
+            MapData = new int[Height*Width];
 
             long pointer = 0;
 
-            for(int y=0; y < 15; y++)
-                for(int x=0; x< 31; x++)
+            for(int y=0; y < Height; y++)
+                for(int x=0; x< Width; x++)
                 {
-                    if(x == 0 || x == 15 || y == 0 || y == 15)
+                    if(x == 0 || x == Width-1 || y == 0 || y == Height-1)
                         MapData[pointer] = 1;
 
                     pointer++;
-                }
-
-                    
+                }                 
         }
     }
 }
