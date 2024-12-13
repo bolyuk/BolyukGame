@@ -10,7 +10,7 @@
             Height = 16;
             Width = 32;
 
-            MapData = new int[Height*Width];
+            CollisionLayer = new int[Height*Width];
 
             long pointer = 0;
 
@@ -18,7 +18,7 @@
                 for(int x=0; x< Width; x++)
                 {
                     if(x == 0 || x == Width-1 || y == 0 || y == Height-1)
-                        MapData[pointer] = 1;
+                        CollisionLayer[pointer] = 1;
 
                     pointer++;
                 }                 

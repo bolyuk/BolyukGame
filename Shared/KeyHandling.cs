@@ -57,6 +57,11 @@ namespace BolyukGame.Shared
             return DownKeys.Count == 1 && DownKeys[0] == key;
         }
 
+        public bool IsDown(Keys key)
+        {
+            return DownKeys.Contains(key);
+        }
+
         public bool IsOnlyUp(Keys key)
         {
             return UpKeys.Count == 1 && UpKeys[0] == key;

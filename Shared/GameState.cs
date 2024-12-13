@@ -1,4 +1,4 @@
-﻿using BolyukGame.GameHandling;
+﻿using BolyukGame.Communication.Controller;
 using BolyukGame.Shared.Info;
 using Microsoft.Xna.Framework.Graphics;
 

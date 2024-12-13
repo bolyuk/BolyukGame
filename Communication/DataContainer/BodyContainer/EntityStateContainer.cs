@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BolyukGame.GameHandling.Container.DataContainers
+namespace BolyukGame.GameHandling.DataContainer.DataContainers
 {
     public class EntityStateContainer
     {

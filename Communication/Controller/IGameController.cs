@@ -1,11 +1,8 @@
-﻿using BolyukGame.GameHandling.Container;
+﻿using BolyukGame.Communication.DataContainer;
 using BolyukGame.Shared.Info;
-using Fleck;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using WebSocketSharp;
 
-namespace BolyukGame.GameHandling
+namespace BolyukGame.Communication.Controller
 {
     public abstract class IGameController
     {
@@ -31,7 +28,7 @@ namespace BolyukGame.GameHandling
         public void OnSessionStarts();
 
         public void OnError(ErrorEventArgs args);
-        
+
     }
 
     public interface IServerGameListener : IGameListener

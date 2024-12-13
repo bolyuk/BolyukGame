@@ -3,8 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using BolyukGame.Communication.DataContainer;
 using BolyukGame.GameHandling;
-using BolyukGame.GameHandling.Container;
+using BolyukGame.GameHandling.DataContainer;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
 
@@ -28,11 +29,10 @@ namespace BolyukGame.Communication.UPD
             {
                 Logger.l("Server listening...");
 
-                var answer = new Answer
+                var answer = new Answer(lobby.Id)
                 {
                     Type = AnswerType.ServerFound,
                     Body = ByteUtils.Serialize(lobby),
-                    LobbyId = lobby.Id
                 };
 
                 var response = ByteUtils.Serialize(answer);

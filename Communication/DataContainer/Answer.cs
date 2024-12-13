@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace BolyukGame.GameHandling.Container
+namespace BolyukGame.Communication.DataContainer
 {
-    public class Answer
+    public class Answer : IContainer<AnswerType, Answer>
     {
-        public byte[] Body { get; set; }
-        public AnswerType Type { get; set; }
-
-        public Guid LobbyId { get; set; }
+        public Answer(Guid LobbyID) : base(LobbyID)
+        {
+        }
     }
 
     public enum AnswerType

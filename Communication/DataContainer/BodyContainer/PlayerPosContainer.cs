@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace BolyukGame.GameHandling.Container.DataContainers
+namespace BolyukGame.GameHandling.DataContainer.DataContainers
 {
     public class PlayerPosContainer
     {

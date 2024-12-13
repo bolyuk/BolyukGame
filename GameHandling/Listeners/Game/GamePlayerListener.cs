@@ -1,14 +1,11 @@
-﻿using BolyukGame.GameHandling.Container;
+﻿using BolyukGame.Communication.Controller;
+using BolyukGame.Communication.DataContainer;
 using BolyukGame.Menu;
 using BolyukGame.Shared;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WebSocketSharp;
 
-namespace BolyukGame.GameHandling.Controller.Listeners.Game
+namespace BolyukGame.GameHandling.Listeners.Game
 {
     public class GamePlayerListener : IPlayerGameListener
     {

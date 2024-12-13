@@ -1,9 +1,8 @@
-﻿using BolyukGame.GameHandling.Container;
+﻿using BolyukGame.Communication.DataContainer;
 using BolyukGame.Shared;
-using System;
 using WebSocketSharp;
 
-namespace BolyukGame.GameHandling
+namespace BolyukGame.Communication.Controller
 {
     public class ClientController : IGameController
     {

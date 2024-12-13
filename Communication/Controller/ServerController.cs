@@ -1,12 +1,10 @@
-﻿using BolyukGame.GameHandling.Container;
+﻿using BolyukGame.Communication.DataContainer;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
 using Fleck;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace BolyukGame.GameHandling
+namespace BolyukGame.Communication.Controller
 {
     public class ServerController : IGameController
     {
@@ -34,7 +32,7 @@ namespace BolyukGame.GameHandling
                         listener.OnPlayerLeave(client);
                         clients.Remove(socket);
                     }
-                        
+
                 };
 
                 socket.OnBinary += (msg) =>
@@ -49,7 +47,7 @@ namespace BolyukGame.GameHandling
 
                     if (!clients.ContainsKey(socket))
                     {
-                        if(parsed.Type != RequestType.Join)
+                        if (parsed.Type != RequestType.Join)
                         {
                             socket.Close();
                             return;
@@ -65,11 +63,11 @@ namespace BolyukGame.GameHandling
 
                         clients.Add(socket, data);
                         listener.OnPlayerReqistered(data);
-                    } 
+                    }
                     else
                     {
                         listener.QueryWork(parsed);
-                    }                    
+                    }
                 };
             });
         }
@@ -83,7 +81,7 @@ namespace BolyukGame.GameHandling
             clients.Clear();
             server.Dispose();
             server = null;
-           
+
         }
 
         public void Broadcast(Answer request)

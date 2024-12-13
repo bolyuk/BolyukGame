@@ -1,6 +1,5 @@
-﻿using BolyukGame.Communication.UPD;
-using BolyukGame.GameHandling;
-using BolyukGame.GameHandling.Controller.Listeners;
+﻿using BolyukGame.Communication.Controller;
+using BolyukGame.Communication.UPD;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
 using BolyukGame.UI;

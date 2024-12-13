@@ -38,21 +38,23 @@ namespace BolyukGame.UI
             for (int y = 0; y < Map.Height; y++)
                 for (int x = 0; x < Map.Width; x++)
                 {
-                    int data = Map.MapData[pointer++];
+                    int data = Map.CollisionLayer[pointer++];
+
+
 
                     if (data == 0)
                         continue;
 
                     DrawTexture(spriteBatch,
                         GameRunner.Wall,
-                        new Vector2(StartX + x * BlockSize, StartY + y * BlockSize),
+                        new Vector2(StartX + (x * BlockSize), StartY + (y * BlockSize)-GameRunner.Wall.Height),
                         scale);
                 }
 
             Players.ForEach(p =>
             DrawTexture(spriteBatch,
             GameRunner.Player,
-            new Vector2(p.Position.X + StartX, p.Position.Y + StartY),
+            new Vector2((p.Position.X * BlockSize) + StartX, (p.Position.Y *BlockSize) + StartY),
             scale,
             p.Color));
         }

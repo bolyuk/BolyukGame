@@ -1,7 +1,4 @@
 ﻿using BolyukGame.Communication.UPD;
-using BolyukGame.GameHandling;
-using BolyukGame.GameHandling.Container;
-using BolyukGame.GameHandling.Controller.Listeners.Lobby;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
 using BolyukGame.Shared.Info.Maps;
@@ -11,6 +8,9 @@ using BolyukGame.UI.Policy;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using BolyukGame.Communication.Controller;
+using BolyukGame.Communication.DataContainer;
+using BolyukGame.GameHandling.Listeners.Lobby;
 
 namespace BolyukGame.Menu
 {
@@ -55,9 +55,8 @@ namespace BolyukGame.Menu
                     return;
                 }
 
-                GameState.Controller.SendQuery(new Request()
+                GameState.Controller.SendQuery(new Request(GameState.CurrentLobby.Id)
                 {
-                    LobbyId = GameState.CurrentLobby.Id,
                     Type = RequestType.ColorSelect,
                     Body = ByteUtils.Serialize(new ColorContainer()
                     {
@@ -122,9 +121,8 @@ namespace BolyukGame.Menu
                     //for test use only
                     GameState.CurrentLobby.Map = new DefaultGameMap();
 
-                    server.Broadcast(new Answer()
+                    server.Broadcast(new Answer(GameState.CurrentLobby.Id)
                     {
-                        LobbyId = GameState.CurrentLobby.Id,
                         Type = AnswerType.GameStart,
                         Body = ByteUtils.Serialize(GameState.CurrentLobby.Map)
                     });
@@ -175,9 +173,8 @@ namespace BolyukGame.Menu
 
                 var server = GameState.Controller as ServerController;
 
-                server.Broadcast(new Answer()
+                server.Broadcast(new Answer(GameState.CurrentLobby.Id)
                 {
-                    LobbyId = GameState.CurrentLobby.Id,
                     Type = AnswerType.PlayerInfo,
                     Body = ByteUtils.Serialize(GameState.CurrentLobby.PlayersList),
                 });

@@ -1,8 +1,9 @@
-﻿using BolyukGame.GameHandling.Container;
+﻿using BolyukGame.Communication.Controller;
+using BolyukGame.Communication.DataContainer;
 using BolyukGame.Menu;
 using BolyukGame.Shared.Info;
 
-namespace BolyukGame.GameHandling.Controller.Listeners.Game
+namespace BolyukGame.GameHandling.Listeners.Game
 {
     public class GameServerListener : IServerGameListener
     {
@@ -25,7 +26,7 @@ namespace BolyukGame.GameHandling.Controller.Listeners.Game
 
         public Answer QueryWork(Request update)
         {
-           return Menu.QueryWork(update);
+            return Menu.QueryWork(update);
         }
     }
 }

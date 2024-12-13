@@ -1,7 +1,4 @@
-﻿using BolyukGame.GameHandling;
-using BolyukGame.GameHandling.Container;
-using BolyukGame.GameHandling.Container.DataContainers;
-using BolyukGame.GameHandling.Controller.Listeners.Game;
+﻿using BolyukGame.GameHandling.DataContainer.DataContainers;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
 using BolyukGame.UI;
@@ -13,6 +10,9 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BolyukGame.Communication.Controller;
+using BolyukGame.Communication.DataContainer;
+using BolyukGame.GameHandling.Listeners.Game;
 
 namespace BolyukGame.Menu
 {
@@ -55,11 +55,10 @@ namespace BolyukGame.Menu
             {
                 Controller.SetListener(new GameServerListener() { Menu = this });
 
-                Controller.SendQuery(new Request()
+                Controller.SendQuery(new Request(Lobby.Id)
                 {
                     Type = RequestType.Ready,
                     Body = ByteUtils.Serialize(GameState.Config.UserId),
-                    LobbyId = Lobby.Id,
                 });
             }
             else
@@ -67,11 +66,10 @@ namespace BolyukGame.Menu
                 Controller.SetListener(new GamePlayerListener() { Menu = this });
             }
 
-            Controller.SendQuery(new Request()
+            Controller.SendQuery(new Request(Lobby.Id)
             {
                 Type = RequestType.MapGet,
                 Body = ByteUtils.Serialize(GameState.Config.UserId),
-                LobbyId = Lobby.Id,
             });
         }
 
@@ -89,25 +87,6 @@ namespace BolyukGame.Menu
             RegUI(game);
             game.ForceOnParentResized();
         }
-
-        //public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        //{
-        //    base.Draw(gameTime, spriteBatch);
-
-        //    if (!IsLoaded)
-        //        return;
-
-        //    DrawGame(gameTime, spriteBatch);
-        //}
-
-        //public override void Update(GameTime gameTime)
-        //{
-        //    base.Update(gameTime);
-
-        //    if (!IsLoaded)
-        //        return;
-        //}
-
 
         //both side
         public virtual void AcceptQuery(Answer answer)
@@ -140,11 +119,10 @@ namespace BolyukGame.Menu
                     return;
 
                 GameState.CurrentLobby = data;
-                Controller.SendQuery(new Request()
+                Controller.SendQuery(new Request(Lobby.Id)
                 {
                     Type = RequestType.Ready,
                     Body = ByteUtils.Serialize(GameState.Config.UserId),
-                    LobbyId = Lobby.Id,
                 });
             }
         }
@@ -152,46 +130,55 @@ namespace BolyukGame.Menu
         //both side
         public override bool CatchKeyEvent(KeyEvent args)
         {
-            if (args.IsOnlyDown(Keys.Up))
-            {
-                var pos = Player.Position;
+            Vector2 direction=Vector2.Zero;
 
-                Player.Position = pos + new Vector2(0, -1);
-                NotifyPosChanged();
-                return true;
-            }
-            if (args.IsOnlyDown(Keys.Down))
-            {
-                var pos = Player.Position;
+            if (args.IsDown(Keys.Up))
+                direction += new Vector2(0, -0.5f);
 
-                Player.Position = pos + new Vector2(0, 1);
-                NotifyPosChanged();
-                return true;
-            }
-            if (args.IsOnlyDown(Keys.Left))
-            {
-                var pos = Player.Position;
 
-                Player.Position = pos + new Vector2(-1, 0);
-                NotifyPosChanged();
-                return true;
-            }
-            if (args.IsOnlyDown(Keys.Right))
-            {
-                var pos = Player.Position;
+            if (args.IsDown(Keys.Down))
+                direction += new Vector2(0, 0.5f);
 
-                Player.Position = pos + new Vector2(1, 0);
-                NotifyPosChanged();
-                return true;
-            }
 
-            return false;
+            if (args.IsDown(Keys.Left))
+                direction += new Vector2(-0.5f, 0);
+
+
+            if (args.IsDown(Keys.Right))
+                direction += new Vector2(0.5f, 0);
+
+
+            if (direction != Vector2.Zero)
+                TryMove(direction);
+            
+
+            return direction != Vector2.Zero;
         }
 
         //server side
         public virtual void OnPlayerLeave(PlayerContainer player)
         {
 
+        }
+
+        public virtual void TryMove(Vector2 direction)
+        {
+            var newPos = Player.Position+direction;
+
+            if(newPos.X < 1)
+                newPos.X = 1;
+
+            if(newPos.Y < 1)
+                newPos.Y = 1;
+
+            if(newPos.X > Lobby.Map.Width-2)
+                newPos.X = Lobby.Map.Width - 2;
+
+            if(newPos.Y > Lobby.Map.Height-3)
+                newPos.Y = Lobby.Map.Height-3;
+
+            Player.Position = newPos;
+            NotifyPosChanged();
         }
 
         //server side
@@ -212,9 +199,8 @@ namespace BolyukGame.Menu
                 {
                     var server = Controller as ServerController;
 
-                    var answer = new Answer()
+                    var answer = new Answer(Lobby.Id)
                     {
-                        LobbyId = Lobby.Id,
                         Type = AnswerType.GameStart,
                     };
 
@@ -234,9 +220,8 @@ namespace BolyukGame.Menu
 
                 p.Position = new Vector2(data.PositionX, data.PositionY);
 
-                var answer = new Answer()
+                var answer = new Answer(Lobby.Id)
                 {
-                    LobbyId = Lobby.Id,
                     Type = AnswerType.PlayerPosContainer,
                     Body = request.Body,
                 };
@@ -247,9 +232,8 @@ namespace BolyukGame.Menu
             }
             else if (request.Type == RequestType.MapGet)
             {
-                var answer = new Answer()
+                var answer = new Answer(Lobby.Id)
                 {
-                    LobbyId = Lobby.Id,
                     Type = AnswerType.MapSend,
                     Body = ByteUtils.Serialize(Lobby),
                 };
@@ -264,9 +248,8 @@ namespace BolyukGame.Menu
 
         private void NotifyPosChanged()
         {
-            GameState.Controller.SendQuery(new Request()
+            GameState.Controller.SendQuery(new Request(Lobby.Id)
             {
-                LobbyId = GameState.CurrentLobby.Id,
                 Type = RequestType.PosChanged,
                 Body = ByteUtils.Serialize(new PlayerPosContainer()
                 {

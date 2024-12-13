@@ -3,8 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using BolyukGame.GameHandling;
-using BolyukGame.GameHandling.Container;
+using BolyukGame.Communication.DataContainer;
 using BolyukGame.Shared;
 using BolyukGame.Shared.Info;
 
@@ -29,7 +28,7 @@ namespace BolyukGame.Communication.UPD
             {
                 udpClient.EnableBroadcast = true;
                 var broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, C.udp_port);
-                var request = ByteUtils.Serialize(new Request() { Type = RequestType.ServerSearch });
+                var request = ByteUtils.Serialize(new Request(null) { Type = RequestType.ServerSearch });
 
                 receiveTask = Task.Run(async () =>
                 {

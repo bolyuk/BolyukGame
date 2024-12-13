@@ -9,7 +9,7 @@ namespace BolyukGame.Shared.Info
     public class GameMap
     {
         public string Name { get; set; }
-        public int[] MapData { get; set; }
+        public int[] CollisionLayer { get; set; }
 
         public int Height { get; set; }
 
